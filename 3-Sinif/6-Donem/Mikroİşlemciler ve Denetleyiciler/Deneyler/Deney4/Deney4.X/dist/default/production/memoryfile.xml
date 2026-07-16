@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project>
+  <executable name="Deney4.elf">
+    <memory name="data">
+      <units>bytes</units>
+      <length>2048</length>
+      <used>90</used>
+      <free>1958</free>
+    </memory>
+    <memory name="program">
+      <units>bytes</units>
+      <length>33024</length>
+      <used>3993</used>
+      <free>29031</free>
+    </memory>
+  </executable>
+</project>

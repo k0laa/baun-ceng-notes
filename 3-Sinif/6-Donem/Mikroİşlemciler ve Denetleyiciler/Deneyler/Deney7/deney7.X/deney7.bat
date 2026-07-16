@@ -1,0 +1,1 @@
+"C:\Program Files\MATLAB\R2023b\bin\win64\gmake" -f deney7.mk  GENERATE_ASAP2=0 MCHP_AUTO_FLASH=0 MCHP_MULTITHREAD_COMPILATION=1 LinkWithMaster=0 OPTS="-DTID01EQ=0 -mdfp=C:/PROGRA~1/Microchip/MPLABX/v6.20/packs/Microchip/dsPIC30F_DFP/1.5.254/xc16" -j 21 -l 21
