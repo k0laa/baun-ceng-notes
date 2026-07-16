@@ -1,0 +1,36 @@
+semaphore mutex = 1;    // binary semaphore for mutual exclusion
+semaphore full = 0;     // initially no filled slots
+semaphore empty = n;    // buffer size
+
+
+void Producer(){
+
+	do {
+
+		// Produce an item
+    		wait(empty);    // Check for empty slot
+    		wait(mutex);    // Enter critical section
+
+    		// Place item in buffer
+
+    		signal(mutex);  // Exit critical section
+    		signal(full);   // Increase number of full slots
+	
+	} while (true);
+
+}
+
+void Consumer(){
+
+	do {
+    		wait(full);     // Check for filled slot
+    		wait(mutex);    // Enter critical section
+
+    		// Remove item from buffer
+
+    		signal(mutex);  // Exit critical section
+    		signal(empty);  // Increase number of empty slots
+
+	} while (true);
+
+}

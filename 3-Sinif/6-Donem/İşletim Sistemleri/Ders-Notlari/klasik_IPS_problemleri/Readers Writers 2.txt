@@ -1,0 +1,56 @@
+semaphore resource     = 1;  // actual shared data
+semaphore readTry      = 1;  // gate that writers can close to block new readers
+semaphore rmutex       = 1;  // protects read_count
+semaphore wmutex       = 1;  // protects write_count
+semaphore serviceQueue = 1;  // turnstile to serialize arrival across readers & writers
+int read_count  = 0;
+int write_count = 0;
+
+
+// -------- Reader --------
+void reader() {
+    // Get in the global line so we can't jump ahead of a waiting writer
+    wait(serviceQueue);
+    wait(readTry);            // blocked if a writer has closed the gate
+    signal(serviceQueue);     // let next arrival line up
+
+    wait(rmutex);
+    read_count++;
+    if (read_count == 1) wait(resource);   // first reader locks the resource
+    signal(rmutex);
+
+    signal(readTry);          // pass gate along (a queued writer will get it next)
+
+    // ---- Critical Section (read) ----
+    // ... read shared data ...
+
+    wait(rmutex);
+    read_count--;
+    if (read_count == 0) signal(resource); // last reader frees the resource
+    signal(rmutex);
+}
+
+
+
+// -------- Writer --------
+void writer() {
+    wait(wmutex);
+    write_count++;
+    if (write_count == 1) wait(readTry);   // first waiting writer closes the reader gate
+    signal(wmutex);
+
+    // Get in the same global line as readers so they can't cut ahead
+    wait(serviceQueue);
+    wait(resource);                         // exclusive access
+    signal(serviceQueue);
+
+    // ---- Critical Section (write) ----
+    // ... write shared data ...
+
+    signal(resource);
+
+    wait(wmutex);
+    write_count--;
+    if (write_count == 0) signal(readTry); // reopen gate for readers
+    signal(wmutex);
+}

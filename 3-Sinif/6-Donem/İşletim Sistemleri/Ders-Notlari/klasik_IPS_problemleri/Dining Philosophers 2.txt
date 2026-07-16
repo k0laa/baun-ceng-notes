@@ -1,0 +1,25 @@
+semaphore chopstick[5] = {1,1,1,1,1};	//binary semaphores
+
+void Philosopher(int i){
+
+	while(true){
+
+		/* think */
+
+		if (i%2==1){
+			wait(chopstick[i]);	//check for right chopstick
+			wait(chopstick[(i+1)%5]);	//check for left chopstick
+		}
+		else{
+			wait(chopstick[(i+1)%5]);	//check for left chopstick
+			wait(chopstick[i]);	//check for right chopstick
+		}
+
+		/* eat */	//critical section
+
+		//put down chopsticks
+		signal(chopstick[i]);
+		signal(chopstick[(i+1)%5]);
+
+	}
+}

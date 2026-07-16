@@ -1,0 +1,39 @@
+semaphore mutex = 1;	//(binary semaphore) Ensures mutual exclusion when updating the reader count (readcnt).
+semaphore wrt = 1;	//(binary semaphore) Controls access to the shared data (used by both readers and writers).
+int readcnt = 0;	//Number of readers currently in the critical section.
+
+void Reader(){
+
+	do {
+
+   		wait(mutex);           // Lock before updating readcnt
+   		readcnt++;
+
+   		if (readcnt == 1) 
+       			wait(wrt);         // First reader blocks writers
+   		signal(mutex);         // Allow other readers in
+	
+   		// ---- Critical Section (Reading) ----
+
+   		wait(mutex);		// Lock
+	   	readcnt--;
+   		if (readcnt == 0) 
+       			signal(wrt);       // Last reader allows writers
+	   	signal(mutex);         // Unlock
+
+	} while(true);
+
+}
+
+void Writer(){
+
+	do {
+   		wait(wrt);   // Lock resource
+
+		   // ---- Critical Section (Writing) ----
+
+		signal(wrt); // Release resource
+
+	} while(true);
+
+}

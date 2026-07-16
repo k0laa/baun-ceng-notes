@@ -1,0 +1,32 @@
+Semaphore customers = 0;
+Semaphore barber = 0;
+Mutex mutex = 1;
+int freeSeats = N;
+
+Barber {
+   while(true) {
+      wait(customers);     // wait for customer
+      wait(mutex);         
+      freeSeats++;         // one waiting chair becomes free
+      signal(barber);          // barber ready
+      signal(mutex);           
+
+      // cut hair
+   }
+}
+
+Customer {
+   while(true) {
+      wait(mutex);
+      if(freeSeats > 0) {
+         freeSeats--;      // take a seat
+         signal(customers);    // notify barber
+         signal(mutex);
+         wait(barber);     // wait for barber
+         // get haircut
+
+      } else {
+         signal(mutex);        // leave if no seat
+      }
+   }
+}

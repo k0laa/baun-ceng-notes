@@ -1,0 +1,26 @@
+semaphore room = 4;	//counting semaphore
+semaphore chopstick[5] = {1,1,1,1,1};	//binary semaphores
+
+
+void Philosopher(int i){
+
+	while(true){
+		
+		/* think */
+
+		wait(room);	//check for room
+
+		//pick up chopsticks
+		wait(chopstick[i]);
+		wait(chopstick[(i+1)%5]);
+
+		/* eat */	//critical section
+
+		//put down chopsticks
+		signal(chopstick[i]);
+		signal(chopstick[(i+1)%5]);
+
+		signal(room);	//exit the room
+
+	}
+}
