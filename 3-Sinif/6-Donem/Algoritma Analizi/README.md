@@ -29,6 +29,17 @@ Notlar haftalara göre düzenlenmiştir ve her PDF, önceki ve sonraki haftalarl
 
 ---
 
+## 📁 Dizin Yapısı
+
+```text
+.
+├── Defter/         # Derste tutulan defter fotoğrafları
+├── Ders-Notlari/   # Yapay zeka ile oluşturulmuş ders notları
+└── README.md
+```
+
+---
+
 ## 📅 Haftalara Göre İçerik
 
 | Hafta | Dosya ve Resim   |
