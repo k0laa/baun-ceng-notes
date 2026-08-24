@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="65">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+                   <itemPath>MCHP_modelInclude.h</itemPath>
+<itemPath>ornek_6_3.h</itemPath>
+<itemPath>ornek_6_3_private.h</itemPath>
+<itemPath>ornek_6_3_types.h</itemPath>
+<itemPath>rtmodel.h</itemPath>
+<itemPath>rtwtypes.h</itemPath>
+
+    </logicalFolder>
+    <logicalFolder name="LibraryFiles"
+                   displayName="Library Files"
+                   projectFiles="true">
+                   
+    </logicalFolder>
+    <logicalFolder name="LinkerFiles"
+                   displayName="Linker Files"
+                   projectFiles="true">
+                   
+    </logicalFolder>
+    <logicalFolder name="ObjectFiles"
+                   displayName="Object Files"
+                   projectFiles="true">
+                   
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+                   <itemPath>ornek_6_3.c</itemPath>
+<itemPath>ornek_6_3_data.c</itemPath>
+<itemPath>ornek_6_3_main.c</itemPath>
+
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Simulink Model"
+                   projectFiles="false">
+                   <itemPath>../ornek_6_3.slx</itemPath>
+
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Simulink" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <targetDevice>dsPIC33FJ32MC204</targetDevice>
+        <targetHeader></targetHeader>
+        <platformTool>Simulator</platformTool>
+        <languageToolchain>XC16</languageToolchain>
+        <languageToolchainVersion>1.70</languageToolchainVersion>
+        <platform>3</platform>
+      </toolsSet>
+      <compileType>
+        <linkerTool>
+          <linkerLibItems>
+          </linkerLibItems>
+        </linkerTool>
+        <loading>
+          <useAlternateLoadableFile>false</useAlternateLoadableFile>
+          <parseOnProdLoad>false</parseOnProdLoad>
+          <alternateLoadableFile/>
+        </loading>        
+      </compileType>
+      <C30>
+        <property key="extra-include-directories" value="C:\Users\bugra\OneDrive\Masaüstü\Buğra\Dersler\üniversite\baun-ceng-notes\3-Sinif\6-Donem\Mikroİşlemciler ve Denetleyiciler\Ornekler\ornek_6_3;C:\Users\bugra\OneDrive\Masaüstü\Buğra\Dersler\üniversite\baun-ceng-notes\3-Sinif\6-Donem\Mikroİşlemciler ve Denetleyiciler\Ornekler\ornek_6_3\ornek_6_3.X;C:\Program Files\MATLAB\R2023b\rtw\c\src;C:\Program Files\MATLAB\R2023b\simulink\src;C:\Program Files\MATLAB\R2023b\toolbox\simulink\blocks\src;C:\Program Files\MATLAB\R2023b\extern\include;C:\Program Files\MATLAB\R2023b\simulink\include;C:\Program Files\MATLAB\R2023b\rtw\c\src\ext_mode\common;C:\Program Files\MATLAB\R2023b\rtw\c\ert"/>
+        <property key="optimization-level" value="2"/>
+        <property key="preprocessor-macros" value="MODEL=ornek_6_3;NUMST=1;NCSTATES=0;HAVESTDIO;MODEL_HAS_DYNAMICALLY_LOADED_SFCNS=0;CLASSIC_INTERFACE=0;ALLOCATIONFCN=0;TID01EQ=0;TERMFCN=1;ONESTEPFCN=1;MAT_FILE=0;MULTI_INSTANCE_CODE=0;INTEGER_CODE=0;MT=0"/>
+        <property key="code-model" value="default"/>
+        <property key="const-model" value="default"/>
+        <property key="scalar-model" value="default"/>
+        <property key="data-model" value="default"/>
+        <property key="enable-large-arrays" value="false"/>
+        <property key="enable-unroll-loops" value="false"/>
+        <property key="enable-procedural-abstraction" value="false"/>
+        <property key="oXC16gcc-large-aggregate" value="false"/>
+        <property key="enable-omit-frame-pointer" value="false"/>
+        <property key="enable-short-double" value="false"/>
+        <property key="enable-symbols" value="true"/>        
+      </C30>
+      <C30-AS>
+      </C30-AS>
+      <C30-LD>
+        <property key="extra-lib-directories" value="C:\Users\bugra\OneDrive\Masaüstü\Buğra\Dersler\üniversite\baun-ceng-notes\3-Sinif\6-Donem\Mikroİşlemciler ve Denetleyiciler\Ornekler\ornek_6_3;C:\Users\bugra\OneDrive\Masaüstü\Buğra\Dersler\üniversite\baun-ceng-notes\3-Sinif\6-Donem\Mikroİşlemciler ve Denetleyiciler\Ornekler\ornek_6_3\ornek_6_3.X;C:\Program Files\MATLAB\R2023b\rtw\c\src;C:\Program Files\MATLAB\R2023b\simulink\src;C:\Program Files\MATLAB\R2023b\toolbox\simulink\blocks\src;C:\Program Files\MATLAB\R2023b\extern\include;C:\Program Files\MATLAB\R2023b\simulink\include;C:\Program Files\MATLAB\R2023b\rtw\c\src\ext_mode\common;C:\Program Files\MATLAB\R2023b\rtw\c\ert"/>
+        <property key="heap-size" value="0"/>        
+        <property key="oXC16ld-fill-upper" value=""/>        
+        <appendMe value="&quot;--report-mem,-Map=info.map,-cref,-lq-dsp,--memorysummary,memoryfile.xml&quot;"/> 
+      </C30-LD>
+      <C30Global>
+      </C30Global>
+      <Simulator>
+      </Simulator>
+    </conf>
+  </confs>
+</configurationDescriptor>
