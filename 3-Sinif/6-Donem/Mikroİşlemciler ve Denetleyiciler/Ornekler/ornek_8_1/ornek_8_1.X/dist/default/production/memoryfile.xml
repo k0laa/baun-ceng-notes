@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project>
+  <executable name="ornek_8_1.elf">
+    <memory name="data">
+      <units>bytes</units>
+      <length>2048</length>
+      <used>54</used>
+      <free>1994</free>
+    </memory>
+    <memory name="program">
+      <units>bytes</units>
+      <length>33024</length>
+      <used>3048</used>
+      <free>29976</free>
+    </memory>
+  </executable>
+</project>
