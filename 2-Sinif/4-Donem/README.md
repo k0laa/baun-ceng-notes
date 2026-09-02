@@ -14,9 +14,9 @@ Bu klasör, Bilgisayar Mühendisliği **2. Sınıf 4. Dönem (Bahar)** kapsamın
 
 | Ders Adı | Öğretim Elemanı | İçerik Durumu | Klasör Bağlantısı |
 | :--- | :--- | :---: | :---: |
-| 📘 **Görsel Programlama** | *Belirtilmedi* | Vize Proje | [İncele](./G%C3%B6rsel%20Programlama/README.md) |
-| 📘 **Nümerik Analiz** | *Belirtilmedi* | Ders Notları, Kitaplar, MATLAB Kodları, Sınav Çalışma Soruları | [İncele](./N%C3%BCmerik%20Analiz/README.md) |
-| 📘 **Sayısal Tasarım** | *Belirtilmedi* | Deneyler, Kitaplar, Ödevler | [İncele](./Say%C4%B1sal%20Tasar%C4%B1m/README.md) |
+| 📘 **Görsel Programlama** | Dr. Öğr. Üyesi Sevdanur GENÇ | Vize & Final Projeleri, Ödev Uygulamaları | [İncele](./G%C3%B6rsel%20Programlama/README.md) |
+| 📘 **Nümerik Analiz** | Doç. Dr. Beyza Billur İSKENDER EROĞLU | Ders Notları, Kitaplar, MATLAB Kodları, Sınav Çalışma Soruları | [İncele](./N%C3%BCmerik%20Analiz/README.md) |
+| 📘 **Sayısal Tasarım** | Prof. Dr. Ayhan İSTANBULLU | Deneyler, Kitaplar, Ödevler | [İncele](./Say%C4%B1sal%20Tasar%C4%B1m/README.md) |
 
 ---
 

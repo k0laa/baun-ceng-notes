@@ -1,10 +1,16 @@
 # 📘 İleri Bilgisayar Ağları
 
-## 📚 Dönem
+[🏠 Ana Sayfa](../../../../README.md) / [🎓 3. Sınıf](../../README.md) / [📅 6. Dönem](../README.md) / **📘 İleri Bilgisayar Ağları**
 
-**Dönem:** 2025-2026 Bahar Dönemi
+---
 
- **Öğretim Elemanı:** Öğr.Gör. Dr. Suat ONUR
+## 📌 Ders Bilgileri
+
+| Özellik | Detay |
+| :--- | :--- |
+| **Dönem** | 2025-2026 Bahar Dönemi |
+| **Öğretim Elemanı** | Öğr. Gör. Dr. Suat ONUR |
+| **Mevcut İçerikler** | Ders Notları, Ders Uygulamaları, Ödevler |
 
 ---
 
@@ -12,27 +18,33 @@
 
 Bu klasörde yer alan PDF dosyaları, önemli bulduğum kısımların özeti ve yapay zekâ desteğiyle oluşturulmuş dijital çalışma notlarıdır.
 
-> [UYARI]
-> Notlar öğrenciler ve yapay zeka tarafından oluşturulmuştur. Bu nedenle öğrencilerin yanlış anlaması veya yanlış olmayan ancak cisconun farklı kabul edebileceği yapay zeka yorumları olabilir.
-> 
-> Çalışırken mümkün olduğunca kendi notlarınız veya resmî ders materyalleri ile karşılaştırmanız tavsiye edilir.
+> [!WARNING]
+> Notlar öğrenciler ve yapay zekâ tarafından oluşturulmıştır. Bu nedenle öğrencilerin yanlış anlaması veya yanlış olmayan ancak Cisco'nun farklı kabul edebileceği yapay zekâ yorumları olabilir. Çalışırken resmî ders materyalleri ile karşılaştırmanız tavsiye edilir.
 
 ---
 
-## 📁 Dizin Yapısı
+## 📁 İçerik Klasörleri
 
-    .
-    ├── Ders-Notlari/         # özetlenmiş ve yapay zeka destekli ders notlari
-    ├── Ders-Uygulamalari/    # derste yapılan pkt uygulamaları
-    ├── Odevler/              # ödev verilen pkt uygulamları
-    └── README.md
+| Klasör | Açıklama | Bağlantı |
+| :--- | :--- | :---: |
+| 📚 **Ders-Notlari** | Özetlenmiş ve yapay zekâ destekli ders notları | [Klasörü Aç](./Ders-Notlari/) |
+| 💻 **Ders-Uygulamalari** | Derste yapılan Packet Tracer (.pkt) uygulamaları | [Klasörü Aç](./Ders-Uygulamalari/) |
+| 🎯 **Odevler** | Ödev olarak verilen Packet Tracer uygulamaları | [Klasörü Aç](./Odevler/) |
 
 ---
 
+## 📂 Dizin Yapısı
 
+```text
+İleri Bilgisayar Ağları/
+├── Ders-Notlari/
+├── Ders-Uygulamalari/
+├── Odevler/
+└── README.md
+```
 
-## 📄 Kaynak
+---
 
-Bu klasördeki notlar tamamen öğrenciler tarafından hazırlanmış çalışma notlarıdır.
+## 📄 Lisans & Sorumluluk Reddi
 
-Resmî ders materyali değildir ve hata içerebilir.
+Bu klasördeki notlar öğrenciler tarafından hazırlanmış çalışma notlarıdır. Resmî ders materyali değildir ve hata içerebilir.

@@ -8,8 +8,8 @@
 
 | Özellik | Detay |
 | :--- | :--- |
-| **Dönem** | 2. Sınıf 4. Dönem (Bahar) |
-| **Öğretim Elemanı** | *Belirtilmedi* |
+| **Dönem** | 2024-2025 Bahar Dönemi |
+| **Öğretim Elemanı** | Doç. Dr. Beyza Billur İSKENDER EROĞLU |
 | **Mevcut İçerikler** | Ders Notları, Kitaplar, MATLAB Kodları, Sınav Çalışma Soruları |
 
 ---

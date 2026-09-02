@@ -1,42 +1,56 @@
-# 📘Veritabanı Yönetim Sistemleri
+# 📘 Veritabanı Yönetim Sistemleri
 
-## 📚 Dönem
+[🏠 Ana Sayfa](../../../../README.md) / [🎓 3. Sınıf](../../README.md) / [📅 5. Dönem](../README.md) / **📘 Veritabanı Yönetim Sistemleri**
 
-**Dönem:** 2025-2026 Güz Dönemi
+---
 
- **Öğretim Elemanı:** Dr. Öğr. Üyesi SEVDANUR GENÇ
+## 📌 Ders Bilgileri
+
+| Özellik | Detay |
+| :--- | :--- |
+| **Dönem** | 2025-2026 Güz Dönemi |
+| **Öğretim Elemanı** | Dr. Öğr. Üyesi Sevdanur GENÇ |
+| **Mevcut İçerikler** | Ders Notları, Geçmiş Sınavlar, Ödevler |
 
 ---
 
 ## 📝 Açıklama
 
-Bu klasörde yer alan sql dosyları ilgili yılın ders içeriğinde yapılan çalışmalardan oluşmaktadır. Yeni öğretim yılında yeni içerikleri eklenebilir ve düzenlenebilir bunların eklenmesinin amacı örnek çözümler göstermektir.
+Bu klasörde yer alan SQL dosyaları ilgili yılın ders içeriğinde yapılan çalışmalardan oluşmaktadır. Yeni öğretim yılında yeni içerikler eklenebilir ve düzenlenebilir. Bunların eklenmesinin amacı örnek çözümler göstermektir.
 
-> [UYARI]
-> Notlar öğrenciler tarafından oluşturulmuştur. Öğrenciler hata yapabilir. Lütfen çalışırken resmi ders materyali ile çakışan bir kısım ile karşılaşırsanız, resmi ders materyallerini esas alınız.
+> [!WARNING]
+> Notlar öğrenciler tarafından oluşturulmuştur. Lütfen çalışırken resmî ders materyali ile çakışan bir kısım ile karşılaşırsanız resmî ders materyallerini esas alınız.
 
 ---
 
 ## 🛠️ Yardımcı Kaynaklar
 
-ER diyagramı çizmek için kullanabileceğiniz site:  [https://app.diagrams.net/](https://app.diagrams.net/)
+- ER diyagramı çizimi için kullanabileceğiniz araç: [draw.io / diagrams.net](https://app.diagrams.net/)
 
 ---
 
-## 📁 Dizin Yapısı
+## 📁 İçerik Klasörleri
 
-    .
-    ├── Ders-Notlari/        # final test sınavı için hazırlanmış hap not
-    ├── Gecmis-Sinavlar/     # ilgili yıldaki sınavın preje dosyaları
-    ├── Odevler/             # ödev verilen sql uygulamAları
-    └── README.md
+| Klasör | Açıklama | Bağlantı |
+| :--- | :--- | :---: |
+| 📚 **Ders-Notlari** | Final test sınavı için hazırlanmış hap notlar | [Klasörü Aç](./Ders-Notlari/) |
+| 🎯 **Gecmis-Sinavlar** | İlgili yıldaki sınavın proje dosyaları | [Klasörü Aç](./Gecmis-Sinavlar/) |
+| 💻 **Odevler** | Ödev verilen SQL uygulamaları | [Klasörü Aç](./Odevler/) |
 
 ---
 
+## 📂 Dizin Yapısı
 
+```text
+Veritabanı Yönetim Sistemleri/
+├── Ders-Notlari/
+├── Gecmis-Sinavlar/
+├── Odevler/
+└── README.md
+```
 
-## 📄 Kaynak
+---
 
-Bu klasördeki notlar tamamen öğrenciler tarafından hazırlanmış çalışma notlarıdır.
+## 📄 Lisans & Sorumluluk Reddi
 
-Resmî ders materyali değildir ve hata içerebilir.
+Bu klasördeki notlar tamamen öğrenciler tarafından hazırlanmış çalışma notlarıdır. Resmî ders materyali değildir ve hata içerebilir.
