@@ -14,9 +14,9 @@ Bu klasör, Bilgisayar Mühendisliği **2. Sınıf 3. Dönem (Güz)** kapsamınd
 
 | Ders Adı | Öğretim Elemanı | İçerik Durumu | Klasör Bağlantısı |
 | :--- | :--- | :---: | :---: |
-| 📘 **Elektronik Devreler** | *Belirtilmedi* | Ders Notları, Ödevler, Geçmiş Sınavlar, Kitaplar, Deneyler | [İncele](./Elektronik%20Devreler/README.md) |
-| 📘 **Nesneye Yönelik Programlama** | *Belirtilmedi* | Geçmiş Sınavlar, Ödevler | [İncele](./Nesneye%20Y%C3%B6nelik%20Programlama/README.md) |
-| 📘 **Veri Yapıları ve Algoritmalar** | *Belirtilmedi* | Ders Notları | [İncele](./Veri%20Yap%C4%B1lar%C4%B1%20ve%20Algoritmalar/README.md) |
+| 📘 **Elektronik Devreler** | Prof. Dr. Ayhan İSTANBULLU | Ders Notları, Ödevler, Geçmiş Sınavlar, Kitaplar, Deneyler | [İncele](./Elektronik%20Devreler/README.md) |
+| 📘 **Nesneye Yönelik Programlama** | Dr. Öğr. Üyesi Sevdanur GENÇ | Geçmiş Sınavlar, Ödevler | [İncele](./Nesneye%20Y%C3%B6nelik%20Programlama/README.md) |
+| 📘 **Veri Yapıları ve Algoritmalar** | Doç. Dr.  Fatih AYDIN | Ders Notları | [İncele](./Veri%20Yap%C4%B1lar%C4%B1%20ve%20Algoritmalar/README.md) |
 
 ---
 

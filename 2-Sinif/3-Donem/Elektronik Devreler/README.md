@@ -8,8 +8,8 @@
 
 | Özellik | Detay |
 | :--- | :--- |
-| **Dönem** | 2. Sınıf 3. Dönem (Güz) |
-| **Öğretim Elemanı** | *Belirtilmedi* |
+| **Dönem** | 2024-2025 Güz Dönemi |
+| **Öğretim Elemanı** | Prof. Dr. Ayhan İSTANBULLU |
 | **Mevcut İçerikler** | Deneyler, Ders Notları, Geçmiş Sınavlar, Kitaplar, Ödevler |
 
 ---
