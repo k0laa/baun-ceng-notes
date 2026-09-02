@@ -1,0 +1,9 @@
+5 soru sadece algoritma çıktı.
+
+hiç veri yapısı yoktu. (ağaç vs) >:(
+
+1 soru binary search
+1 soru bubble sorta çok benzer bir sıralama algoritması
+1 soru greedy yaklaşımı (soruda eksikler vardı. belirsiz olduğundan zordu.)
+1 soru recursive sayı kuvvetti alma algoritması
+1 soru iteratif fibonacci hesaplama
