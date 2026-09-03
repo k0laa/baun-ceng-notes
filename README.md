@@ -95,6 +95,19 @@ Bu depodaki içerikler aksi belirtilmedikçe **[Creative Commons Attribution-Non
 
 ---
 
-## ⭐ Destek ve Teşekkür
+## ⭐ Destek
 
-Projeyi faydalı bulduysanız sağ üst köşeden **Star (⭐)** vererek ve notlarınızı paylaşarak destek olabilirsiniz. Katkı sağlayan tüm öğrencilere teşekkür ederiz! ❤️
+Projeyi faydalı bulduysanız sağ üst köşeden **Star (⭐)** vererek destek olabilirsiniz.
+
+---
+
+## ❤️ Teşekkürler
+
+Bu depoya ders notları, düzeltmeler ve düzenlemeler ile katkıda bulunan tüm öğrencilerimize teşekkür ederiz:
+
+- **[Berfin Hazar](https://github.com/berfinhazar)**
+- **[Mehmet Koç](https://github.com/MehmetKoc16)**
+- **[Oğuzalp Kocagöz](https://github.com/OguzalpKocagoz)**
+- **[Sıla İspir](https://github.com/silaispir)**
+
+> 💡 Siz de notlarınızı paylaşarak katkıda bulunmak isterseniz **[CONTRIBUTING.md](./CONTRIBUTING.md)** rehberini inceleyebilirsiniz.
