@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algoritma Analizi - Konu Bazlı Quiz</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --card: #1a1d24;
+    --card-border: #2a2e38;
+    --text: #e8e9ed;
+    --text-secondary: #9aa0ab;
+    --accent: #5b8cff;
+    --success-bg: #16321f;
+    --success-border: #2f8a4f;
+    --success-text: #6fdc8c;
+    --danger-bg: #3a1c1c;
+    --danger-border: #b3413e;
+    --danger-text: #ff8a85;
+    --chip-bg: #20242c;
+    --chip-active: #2c3450;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 16px;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin: 0 0 24px;
+  }
+
+  .topic-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .topic-chip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--chip-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+
+  .topic-chip:hover {
+    border-color: var(--accent);
+  }
+
+  .topic-chip.active {
+    background: var(--chip-active);
+    border-color: var(--accent);
+  }
+
+  .topic-chip .topic-name {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .topic-chip .topic-count {
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: var(--card);
+    border-radius: 20px;
+    padding: 2px 10px;
+    flex-shrink: 0;
+    margin-left: 12px;
+  }
+
+  .topic-chip.active .topic-count {
+    color: var(--accent);
+  }
+
+  .check-icon {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--text-secondary);
+    border-radius: 4px;
+    margin-right: 12px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .topic-chip.active .check-icon {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .check-icon svg {
+    width: 12px;
+    height: 12px;
+    display: none;
+  }
+
+  .topic-chip.active .check-icon svg {
+    display: block;
+  }
+
+  .topic-left {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+
+  .start-bar {
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(to top, var(--bg) 70%, transparent);
+    padding: 16px 0 8px;
+    margin-top: 8px;
+  }
+
+  button.primary {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  button.primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  button.primary:active:not(:disabled) {
+    opacity: 0.85;
+  }
+
+  .total-info {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+  }
+
+  /* Quiz screen */
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .progress-bar {
+    height: 5px;
+    background: var(--card-border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.2s;
+  }
+
+  .question-topic-tag {
+    display: inline-block;
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(91,140,255,0.12);
+    border-radius: 6px;
+    padding: 3px 8px;
+    margin-bottom: 10px;
+  }
+
+  .question-text {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 18px;
+    line-height: 1.5;
+  }
+
+  .option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: var(--card);
+    border: 1.5px solid var(--card-border);
+    border-radius: 10px;
+    padding: 13px 14px;
+    font-size: 15px;
+    color: var(--text);
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+
+  .option:hover:not(:disabled) {
+    border-color: var(--accent);
+  }
+
+  .option:disabled {
+    cursor: default;
+  }
+
+  .option.correct {
+    background: var(--success-bg);
+    border-color: var(--success-border);
+    color: var(--success-text);
+  }
+
+  .option.wrong {
+    background: var(--danger-bg);
+    border-color: var(--danger-border);
+    color: var(--danger-text);
+  }
+
+  .action-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  button.secondary {
+    flex: 1;
+    background: transparent;
+    border: 1.5px solid var(--card-border);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  button.secondary:hover {
+    border-color: var(--accent);
+  }
+
+  .hint-box {
+    margin-top: 10px;
+    padding: 12px 14px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-left: 3px solid #f0b429;
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  .info-card {
+    margin-top: 14px;
+    padding: 14px 16px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .info-card .result-label {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .info-card.is-correct {
+    border-color: var(--success-border);
+  }
+  .info-card.is-correct .result-label {
+    color: var(--success-text);
+  }
+  .info-card.is-wrong {
+    border-color: var(--danger-border);
+  }
+  .info-card.is-wrong .result-label {
+    color: var(--danger-text);
+  }
+
+  .next-btn {
+    width: 100%;
+    margin-top: 14px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Results screen */
+  .result-hero {
+    text-align: center;
+    padding: 32px 16px;
+  }
+
+  .result-score {
+    font-size: 48px;
+    font-weight: 700;
+    margin: 8px 0 4px;
+  }
+
+  .result-pct {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+  }
+
+  .topic-breakdown {
+    text-align: left;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+  }
+
+  .topic-breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 14px;
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .topic-breakdown-row:last-child {
+    border-bottom: none;
+  }
+
+  .hidden { display: none !important; }
+
+  footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 28px;
+    padding-bottom: 20px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- TOPIC SELECTION SCREEN -->
+  <div id="screen-select">
+    <h1>Algoritma Analizi - Quiz</h1>
+    <p class="subtitle">Çalışmak istediğin konu başlıklarını seç, birden fazla seçebilirsin.</p>
+
+    <div class="topic-grid" id="topic-grid"></div>
+
+    <div class="start-bar">
+      <p class="total-info" id="total-info">0 soru seçildi</p>
+      <button class="primary" id="start-btn" disabled>Quizi Başlat</button>
+    </div>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="screen-quiz" class="hidden">
+    <div class="quiz-header">
+      <span id="q-counter">Soru 1 / 1</span>
+      <span id="q-score">Skor: 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+
+    <div id="q-topic-tag" class="question-topic-tag"></div>
+    <p class="question-text" id="q-text"></p>
+    <div id="q-options"></div>
+
+    <div class="action-row" id="hint-row">
+      <button class="secondary" id="hint-btn">💡 İpucu</button>
+    </div>
+    <div class="hint-box hidden" id="hint-box"></div>
+
+    <div id="info-card-wrap"></div>
+    <button class="next-btn hidden" id="next-btn">Sonraki Soru →</button>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="screen-results" class="hidden">
+    <div class="result-hero">
+      <p class="subtitle" style="margin:0;">Test tamamlandı</p>
+      <div class="result-score" id="result-score">0 / 0</div>
+      <div class="result-pct" id="result-pct">%0</div>
+    </div>
+    <div class="topic-breakdown" id="topic-breakdown"></div>
+    <div class="action-row">
+      <button class="secondary" id="restart-same">Aynı konularla tekrar</button>
+      <button class="secondary" id="restart-new">Konu seçimine dön</button>
+    </div>
+  </div>
+
+  <footer>Algoritma Analizi Çalışma Quiz'i &middot; Arkadaşlarınla paylaşabilirsin</footer>
+</div>
+
+<script>
+// ============ SORU VERİTABANI ============
+const QUESTION_BANK = {
+  "BST": [
+    {
+      q: "Binary Search Tree'de 'en kötü durum' karmaşıklığı O(n) olur, çünkü:",
+      options: ["Ağaç dengeli büyür", "Ağaç zincir (tek yönlü) şeklinde büyür", "Her düğümde 2 çocuk vardır", "Hash çakışması olur"],
+      correct: 1,
+      hint: "T(n) = T(n-1) + c recurrence'ını düşün.",
+      explain: "Ağaç zincir gibi (her düğümün tek çocuğu) büyürse, T(n)=T(n-1)+c olur ve telescoping ile T(n)=O(n) çıkar."
+    },
+    {
+      q: "BST'de ortalama durum recurrence'ı T(n) = T(n/2) + c'nin sonucu nedir?",
+      options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+      correct: 1,
+      hint: "Her adımda problem yarıya bölünüyor, kaç adım sonra 1'e ulaşılır?",
+      explain: "Her adımda n yarıya bölünür (n -> n/2 -> n/4 -> ... -> 1). Toplam log n adım gerekir, dolayısıyla O(log n)."
+    },
+    {
+      q: "Recursive search fonksiyonunda 'if (key < root.key)' koşulu doğruysa ne yapılır?",
+      options: ["search(root.right, key) çağrılır", "search(root.left, key) çağrılır", "root döndürülür", "null döndürülür"],
+      correct: 1,
+      hint: "BST kuralı: sol < kök < sağ.",
+      explain: "Aranan key, kök değerden küçükse, sonuç ağacın SOL alt ağacında olmalıdır, dolayısıyla search(root.left, key) çağrılır."
+    },
+    {
+      q: "Iterative Insertion'da n eleman eklerken 'en kötü durum' karmaşıklığı nedir?",
+      options: ["O(1)", "O(n log n)", "O(n)", "O(n^2)"],
+      correct: 3,
+      hint: "Ağaç zincir şeklinde büyürse, n. eleman eklenirken n-1 karşılaştırma gerekir.",
+      explain: "k=0 olduğunda T(n)=T(0)+T(n-1)+c olur. n eleman eklerken toplam karşılaştırma sayısı 0+1+2+...+(n-1)=n(n-1)/2, yani O(n^2)."
+    },
+    {
+      q: "Iterative Insertion'da n eleman eklerken 'en iyi durum' (dengeli ağaç) karmaşıklığı nedir?",
+      options: ["O(1)", "O(log n)", "O(n log n)", "O(n^2)"],
+      correct: 2,
+      hint: "T(n) = 2T(n/2) + c recurrence'ını çöz.",
+      explain: "k=n/2 olduğunda T(n)=2T(n/2)+c olur. Bu recurrence'ın çözümü O(n log n)'dir (her seviyede toplam n iş, log n seviye)."
+    },
+    {
+      q: "BST'de bir tek eleman eklerken 'en iyi durum' karmaşıklığı nedir?",
+      options: ["O(1)", "O(log n)", "O(n)", "O(n^2)"],
+      correct: 0,
+      hint: "Ağaç boşsa, eklenen eleman direkt kök olur.",
+      explain: "Ağaç boşsa veya kök hemen bulunabiliyorsa, sadece 1 işlem yeterlidir, bu da O(1)'dir."
+    },
+    {
+      q: "Iterative Insertion'daki genel denklem T(n) = T(k) + T(n-k-1) + c'de k neyi temsil eder?",
+      options: ["Sağ alt ağaçtaki düğüm sayısını", "Sol alt ağaçtaki düğüm sayısını", "Ağacın yüksekliğini", "Toplam düğüm sayısını"],
+      correct: 1,
+      hint: "n-k-1 ifadesi geri kalan (sağ) tarafı temsil ediyor.",
+      explain: "k, sol alt ağaca düşen düğüm sayısını temsil eder; n-k-1 ise sağ alt ağaca düşen düğüm sayısı olur (1 düğüm de kök için ayrılır)."
+    },
+    {
+      q: "BST'de preorder traversal hangi sırayla gezinir?",
+      options: ["Sol-Kök-Sağ", "Kök-Sol-Sağ", "Sol-Sağ-Kök", "Sağ-Kök-Sol"],
+      correct: 1,
+      hint: "'Pre' = önce, kök önce ziyaret edilir.",
+      explain: "Preorder traversal Kök-Sol-Sağ sırasıyla gezinir: önce kök yazdırılır, sonra sol alt ağaç, sonra sağ alt ağaç gezilir."
+    },
+    {
+      q: "BST'de postorder traversal hangi sırayla gezinir?",
+      options: ["Kök-Sol-Sağ", "Sol-Kök-Sağ", "Sol-Sağ-Kök", "Sağ-Sol-Kök"],
+      correct: 2,
+      hint: "'Post' = sonra, kök en son ziyaret edilir.",
+      explain: "Postorder traversal Sol-Sağ-Kök sırasıyla gezinir: önce sol alt ağaç, sonra sağ alt ağaç, en son kök ziyaret edilir."
+    },
+    {
+      q: "Level-order (BFS tarzı) ağaç gezintisi hangi veri yapısını kullanır?",
+      options: ["Stack", "Queue", "Heap", "Hiçbiri, recursive çalışır"],
+      correct: 1,
+      hint: "Seviye seviye gezinmek FIFO mantığı gerektirir.",
+      explain: "Level-order traversal, düğümleri seviye seviye (yukarıdan aşağıya, soldan sağa) gezdiği için Queue (kuyruk) kullanır."
+    },
+    {
+      q: "BST'de search fonksiyonunda 'key == root.key' koşulu sağlanırsa ne döner?",
+      options: ["null", "root", "root.left", "root.right"],
+      correct: 1,
+      hint: "Aranan eleman bulundu demektir.",
+      explain: "Aranan key, kök düğümün key değerine eşitse, arama başarılı olmuştur ve root döndürülür."
+    }
+  ],
+  "Hashing": [
+    {
+      q: "Hash tablolarda alpha = N/M oranına ne denir?",
+      options: ["Hash factor", "Load factor (doluluk oranı)", "Collision rate", "Probe sequence"],
+      correct: 1,
+      hint: "N = eleman sayısı, M = slot sayısı.",
+      explain: "alpha = N/M oranı 'load factor' (doluluk oranı) olarak adlandırılır ve hash tablosunun performansını belirleyen en önemli faktördür."
+    },
+    {
+      q: "Linear Probing'de p(k,i) = (h(k) + i*c) mod M formülü hangi yönteme aittir?",
+      options: ["Quadratic Probing", "Double Hashing", "Linear Probing", "Separate Chaining"],
+      correct: 2,
+      hint: "İsim formülün içinde geçiyor.",
+      explain: "Bu formül doğrusal (linear) artışla bir sonraki slotu hesapladığı için Linear Probing'e aittir."
+    },
+    {
+      q: "Linear Probing'de 'başarısız arama' maliyeti hangi işlemle aynıdır?",
+      options: ["Silme", "Güncelleme", "Ekleme", "Traversal"],
+      correct: 2,
+      hint: "Yeni eleman eklemek için önce boş slot bulmak gerekir.",
+      explain: "Ekleme (put) işlemi için boş bir slot bulunana kadar ilerlenir, bu tam olarak başarısız aramanın yaptığı işlemdir."
+    },
+    {
+      q: "Linear Probing'de 'başarılı arama / silme' maliyeti hangi işlemle aynıdır?",
+      options: ["Ekleme", "Başarısız arama", "Birbirleriyle aynıdır (başarılı arama = silme)", "Hiçbiriyle aynı değildir"],
+      correct: 2,
+      hint: "Silme yapmadan önce elemanı bulman gerekir.",
+      explain: "Silme işlemi önce elemanı ARAMAYI gerektirir (başarılı arama), bu yüzden ikisinin maliyeti aynıdır: 1/2 * (1 + 1/(1-alpha))."
+    },
+    {
+      q: "Separate Chaining'de 'başarısız arama' beklenen karşılaştırma sayısı formülü hangisidir?",
+      options: ["alpha", "(1 + alpha - e^-alpha) / 2", "1 - alpha", "alpha^2"],
+      correct: 0,
+      hint: "Poisson dağılımının beklenen değerini düşün.",
+      explain: "Poisson dağılımı E[X]=alpha olduğu için, başarısız arama beklenen karşılaştırma sayısı direkt alpha'ya eşit çıkar."
+    },
+    {
+      q: "Open Hashing (Separate Chaining) yapısında çakışan elemanlar nereye eklenir?",
+      options: ["Bir sonraki boş slota", "Aynı slotun linked list'ine", "Tablonun en sonuna", "Silinirler"],
+      correct: 1,
+      hint: "'Separate Chaining' ismindeki 'chain' (zincir) kelimesini düşün.",
+      explain: "Her slot bir linked list (zincir) tutar; çakışan elemanlar bu listeye eklenir, mevcut tablo elemanı silinmez veya taşınmaz."
+    },
+    {
+      q: "deleted flag (boolean) Open Addressing'de neden gereklidir?",
+      options: [
+        "Belleği artırmak için",
+        "Silinen slotu null yapmak arama zincirini bozar, bu yüzden işaretleme gerekir",
+        "Hash fonksiyonunu hızlandırmak için",
+        "Hiçbir nedeni yok, isteğe bağlıdır"
+      ],
+      correct: 1,
+      hint: "Bir slotu null yaparsan, arama o noktada 'eleman yok' diye düşünüp duracaktır.",
+      explain: "Fiziksel silme (null yapma) yapılırsa, probe sequence kesintiye uğrar ve sonraki elemanlara erişim kaybedilebilir. deleted=true ile arama bu slotu atlayıp devam eder."
+    },
+    {
+      q: "Quadratic Probing'in Linear Probing'e göre avantajı nedir?",
+      options: [
+        "Daha az bellek kullanır",
+        "Kümelenme (clustering) problemini azaltır",
+        "Negatif sayılarla çalışabilir",
+        "Hiçbir avantajı yoktur"
+      ],
+      correct: 1,
+      hint: "Linear Probing'de ardışık slotlar dolarsa kümeler oluşur.",
+      explain: "Quadratic Probing, adım büyüklüğünü kareler şeklinde artırarak (1, 4, 9...) Linear Probing'deki birincil kümelenme (primary clustering) sorununu azaltır."
+    },
+    {
+      q: "Double Hashing yönteminde p(k,i) = (h1(k) + i*h2(k)) mod M formülünde h2(k) fonksiyonu için hangi koşul önemlidir?",
+      options: [
+        "h2(k) her zaman 0 olmalı",
+        "h2(k), M ile aralarında ortak bölen olmamalı (M'ye göre asal gibi davranmalı)",
+        "h2(k) negatif olmalı",
+        "h2(k) = h1(k) olmalı"
+      ],
+      correct: 1,
+      hint: "Tüm slotların gezilebilmesi için özel bir koşul gerekir.",
+      explain: "Double Hashing'in tüm tabloyu tarayabilmesi için h2(k) değerinin M ile aralarında 1'den başka ortak bölen olmaması (coprime olması) gerekir."
+    },
+    {
+      q: "Hash fonksiyonu h(x) = x mod M'de M değeri için ne söylenebilir?",
+      options: [
+        "M her zaman çift sayı olmalı",
+        "M genellikle bir asal sayı seçilirse çakışmalar azalır",
+        "M'nin değeri önemli değildir",
+        "M her zaman 10'un katı olmalı"
+      ],
+      correct: 1,
+      hint: "Asal sayılar, hash değerlerinin daha düzgün dağılmasını sağlar.",
+      explain: "M asal sayı seçildiğinde, hash fonksiyonunun çıktıları (mod M) daha düzgün dağılır ve çakışma olasılığı azalır."
+    },
+    {
+      q: "Hash tablosunda alpha (load factor) 1'den büyük olabilir mi?",
+      options: [
+        "Hayır, asla olamaz",
+        "Sadece Open Addressing'de olabilir",
+        "Sadece Separate Chaining'de olabilir, çünkü her slot birden fazla eleman tutabilir",
+        "Her zaman tam 1 olmalı"
+      ],
+      correct: 2,
+      hint: "Open Addressing'de her slotta en fazla 1 eleman olabilir ama Separate Chaining'de değil.",
+      explain: "Separate Chaining'de her slot bir linked list tuttuğu için, N (eleman sayısı) M'den (slot sayısı) büyük olabilir, yani alpha 1'i aşabilir. Open Addressing'de ise alpha hiçbir zaman 1'i geçemez."
+    }
+  ],
+  "B-Tree": [
+    {
+      q: "B-Tree'de t (minimum derece) için bir düğümdeki maksimum anahtar sayısı kaçtır?",
+      options: ["t", "t-1", "2t-1", "2t"],
+      correct: 2,
+      hint: "Minimum anahtar sayısı t-1, maksimum bunun yaklaşık iki katı eksi bir.",
+      explain: "B-Tree kurallarına göre bir düğüm en az t-1, en fazla 2t-1 anahtar tutabilir."
+    },
+    {
+      q: "B-Tree'de bir düğüm dolup (2t-1 anahtar) yeni eleman eklenince ne olur?",
+      options: [
+        "Eleman kabul edilmez",
+        "Düğüm bölünür ve ortadaki eleman yukarı çıkar",
+        "Ağaç yeniden başlatılır",
+        "Tüm anahtarlar silinir"
+      ],
+      correct: 1,
+      hint: "Düğüm 2 parçaya ayrılır, biri kalır.",
+      explain: "Dolu düğüm (2t-1 anahtar) yeni eleman alınca toplam 2t anahtar olur. Düğüm ikiye bölünür ve ortadaki (medyan) anahtar üst düğüme (parent) çıkar."
+    },
+    {
+      q: "B-Tree'nin BST'ye göre avantajı nedir?",
+      options: [
+        "Daha az bellek kullanır",
+        "Her zaman dengelidir, O(log n) garantilidir",
+        "Sadece tam sayılarla çalışır",
+        "Kenar sayısı sabittir"
+      ],
+      correct: 1,
+      hint: "BST dengesiz büyüyebilir ama B-Tree...",
+      explain: "BST en kötü durumda O(n) olabilir (zincir ağaç), ancak B-Tree her zaman dengelidir ve O(log n) arama/ekleme/silme garantisi verir."
+    },
+    {
+      q: "B-Tree'nin gerçek hayatta en yaygın kullanım alanı nedir?",
+      options: ["Görüntü işleme", "Veritabanı indeksleme ve dosya sistemleri", "Şifreleme algoritmaları", "Grafik render"],
+      correct: 1,
+      hint: "Disk erişimini minimize etmek önemli olan sistemleri düşün.",
+      explain: "B-Tree'ler MySQL, PostgreSQL gibi veritabanlarının indeks yapılarında ve NTFS, ext4 gibi dosya sistemlerinde kullanılır."
+    },
+    {
+      q: "B-Tree'de minimum derece t için bir düğümün minimum çocuk sayısı kaçtır (kök hariç)?",
+      options: ["t-1", "t", "2t-1", "2t"],
+      correct: 1,
+      hint: "Minimum çocuk sayısı, minimum anahtar sayısından bir fazladır.",
+      explain: "Bir B-Tree düğümü (kök hariç) en az t çocuğa sahip olmalıdır; bu da minimum t-1 anahtar bulundurma kuralından kaynaklanır."
+    },
+    {
+      q: "B-Tree'de bir düğün anahtar sayısı minimum sınırın (t-1) altına düşerse ne olur?",
+      options: [
+        "Hiçbir şey, izin verilir",
+        "Düğüm komşu düğümle birleştirilir (merge) veya ondan eleman alır (borrow)",
+        "Ağaç tamamen yeniden oluşturulur",
+        "Düğüm otomatik olarak silinir"
+      ],
+      correct: 1,
+      hint: "Silme işlemlerinde dengeyi korumak için özel bir mekanizma gerekir.",
+      explain: "Silme sonrası bir düğümün anahtar sayısı t-1'in altına düşerse, komşu kardeş düğümden eleman ödünç alınır (borrowing) veya düğümler birleştirilir (merging)."
+    },
+    {
+      q: "B+ Tree'nin B-Tree'den temel farkı nedir?",
+      options: [
+        "B+ Tree'de veriler sadece yapraklarda tutulur ve yapraklar birbirine bağlıdır",
+        "B+ Tree'de hiç anahtar yoktur",
+        "B+ Tree dengesiz olabilir",
+        "B+ Tree sadece sayısal verilerle çalışır"
+      ],
+      correct: 0,
+      hint: "B+ kelimesinin '+' işareti ekstra bir özelliği gösteriyor.",
+      explain: "B+ Tree'de tüm gerçek veri sadece yaprak düğümlerde tutulur, iç düğümler sadece yönlendirme için kullanılır. Ayrıca yapraklar birbirine bağlı bir liste oluşturduğu için sıralı erişim çok hızlıdır."
+    },
+    {
+      q: "B-Tree'de derinlik (d) ile n (eleman sayısı) arasındaki ilişki hangi formülle ifade edilir?",
+      options: ["d = n - 1", "d = log_t(n+1) - 1", "d = n / t", "d = t^n"],
+      correct: 1,
+      hint: "n_min = t^(d+1) - 1 formülünden d'yi çöz.",
+      explain: "n_min = t^(d+1) - 1 formülünden başlayarak, d = log_t(n+1) - 1 elde edilir. Bu, B-Tree'nin derinliğinin neden O(log n) ile sınırlı olduğunu gösterir."
+    },
+    {
+      q: "B-Tree'de t değeri büyüdükçe (örneğin t=2'den t=16'ya) ağacın derinliği nasıl değişir?",
+      options: ["Artar", "Azalır", "Değişmez", "Önce artar sonra azalır"],
+      correct: 1,
+      hint: "Daha büyük t, her düğümde daha fazla anahtar demek, dolayısıyla daha az seviye gerekir.",
+      explain: "t büyüdükçe her düğüm daha fazla anahtar/çocuk barındırabilir, bu da aynı n eleman için daha az derinlik (d) gerektirir - örneğin t=2 için d≈9 iken t=16 için d≈2 olabilir."
+    }
+  ],
+  "Graf Türleri": [
+    {
+      q: "Bir grafta her kenarın yönü varsa bu graf türü nedir?",
+      options: ["Undirected Graph", "Directed Graph", "Multi Graph", "Pseudo Graph"],
+      correct: 1,
+      hint: "'Directed' kelimesinin Türkçe karşılığı 'yönlü'.",
+      explain: "Kenarların belirli bir yönü (A'dan B'ye, B'den A'ya değil) varsa bu graf 'Directed Graph' (yönlü graf) olarak adlandırılır."
+    },
+    {
+      q: "Self-loop (kendine bağlı kenar) içeren graf türü nedir?",
+      options: ["Simple Graph", "Pseudo Graph", "Complete Graph", "Regular Graph"],
+      correct: 1,
+      hint: "Bu graf türü hem self-loop hem de çoklu kenar içerebilir.",
+      explain: "Self-loop (bir düğümün kendine bağlı kenarı) içeren graflar 'Pseudo Graph' (sözde graf) olarak adlandırılır."
+    },
+    {
+      q: "Her düğüm çifti arasında bir kenar bulunan graf türü nedir?",
+      options: ["Cycle Graph", "Regular Graph", "Complete Graph", "Disconnected Graph"],
+      correct: 2,
+      hint: "'Tam' kelimesinin İngilizcesi.",
+      explain: "Her düğüm çifti arasında kenar bulunan graflar 'Complete Graph' (Tam Graf) olarak adlandırılır."
+    },
+    {
+      q: "Euler Circuit'in var olabilmesi için graf hangi koşulu sağlamalıdır?",
+      options: [
+        "Tüm düğümlerin derecesi tek olmalı",
+        "Tüm düğümlerin derecesi çift olmalı",
+        "Sadece 2 düğümün derecesi çift olmalı",
+        "Graf bağlantısız olmalı"
+      ],
+      correct: 1,
+      hint: "Circuit = aynı yerden başlayıp aynı yerde biten kapalı yol.",
+      explain: "Euler Circuit, başladığı düğümde biten kapalı yoldur. Bunun var olabilmesi için tüm düğümlerin derecesinin çift olması gerekir."
+    },
+    {
+      q: "Hamilton Graf'ın tanımı nedir?",
+      options: [
+        "Her kenarı tam 1 kez geçen yol",
+        "Her düğümü tam 1 kez geçen ve başladığı düğümde biten kapalı yol",
+        "Hiç döngü içermeyen graf",
+        "Tüm düğümlerin aynı dereceye sahip olduğu graf"
+      ],
+      correct: 1,
+      hint: "Euler ile karıştırma: Euler kenarları sayar, Hamilton düğümleri.",
+      explain: "Hamilton Graf, her düğümü tam bir kez ziyaret eden ve başladığı yere dönen kapalı bir yola (Hamilton döngüsüne) sahip graftır."
+    },
+    {
+      q: "Bir grafta her düğümün aynı dereceye sahip olduğu graf türü nedir?",
+      options: ["Complete Graph", "Regular Graph", "Cycle Graph", "Bipartite Graph"],
+      correct: 1,
+      hint: "'Regular' = düzenli.",
+      explain: "Tüm düğümlerin derecesi (komşu sayısı) birbirine eşit olan graflar 'Regular Graph' (Düzenli Graf) olarak adlandırılır."
+    },
+    {
+      q: "Birbirinden tamamen kopuk parçalara sahip bir graf nasıl adlandırılır?",
+      options: ["Connected Graph", "Disconnected Graph", "Complete Graph", "Cyclic Graph"],
+      correct: 1,
+      hint: "'Disconnected' = bağlantısız.",
+      explain: "Eğer graf içinde birbirine hiçbir yolla bağlı olmayan ayrı bileşenler (component) varsa, bu graf 'Disconnected Graph' (Bağlantısız Graf) olarak adlandırılır."
+    },
+    {
+      q: "Bir grafta hiç döngü (cycle) bulunmuyorsa bu graf nasıl adlandırılır?",
+      options: ["Cyclic Graph", "Acyclic Graph", "Pseudo Graph", "Multi Graph"],
+      correct: 1,
+      hint: "'A-' öneki 'yok' anlamına gelir (Türkçe'de '-sız/-siz' eki gibi).",
+      explain: "Döngü içermeyen graflar 'Acyclic Graph' (Döngüsüz Graf) olarak adlandırılır. Ağaçlar (tree) bu kategoriye girer."
+    },
+    {
+      q: "İki düğüm arasında birden fazla kenar bulunabilen graf türü nedir?",
+      options: ["Simple Graph", "Multi Graph", "Regular Graph", "Trivial Graph"],
+      correct: 1,
+      hint: "'Multi' = çoklu.",
+      explain: "İki düğüm arasında birden fazla kenarın olmasına izin veren graflar 'Multi Graph' (Çoklu Graf) olarak adlandırılır."
+    },
+    {
+      q: "Bir grafta self-loop YOK ve çoklu kenar YOK ise bu graf nasıl adlandırılır?",
+      options: ["Pseudo Graph", "Multi Graph", "Simple Graph", "Complete Graph"],
+      correct: 2,
+      hint: "En 'temiz' graf türünü düşün.",
+      explain: "Self-loop ve çoklu kenar içermeyen graflar 'Simple Graph' (Basit Graf) olarak adlandırılır."
+    }
+  ],
+  "DFS/BFS": [
+    {
+      q: "DFS (Depth-First Search) hangi veri yapısını kullanır?",
+      options: ["Queue", "Stack", "Heap", "Linked List"],
+      correct: 1,
+      hint: "BFS'in tam tersi bir veri yapısı kullanır.",
+      explain: "DFS, mümkün olduğunca derine inmeye çalışır ve bunun için Stack (yığın) kullanır - ya doğrudan ya da recursive çağrı yığını şeklinde."
+    },
+    {
+      q: "BFS (Breadth-First Search) hangi veri yapısını kullanır?",
+      options: ["Stack", "Queue", "Heap", "Tree"],
+      correct: 1,
+      hint: "Seviye seviye ilerlemek için FIFO mantığı gerekir.",
+      explain: "BFS seviye seviye gezindiği için FIFO (First-In-First-Out) mantığında çalışan Queue (kuyruk) kullanır."
+    },
+    {
+      q: "Graf gezinti algoritmalarında (DFS/BFS) 'visited' kontrolü neden şarttır?",
+      options: [
+        "Bellek tasarrufu için",
+        "Grafta döngü varsa sonsuz döngüye girmemek için",
+        "Sadece performans için, şart değil",
+        "Sadece yönlü graflarda gereklidir"
+      ],
+      correct: 1,
+      hint: "Ağaçlarda döngü yoktur ama graflarda olabilir.",
+      explain: "Graflar döngü içerebilir (ağaçlardan farklı olarak). visited kontrolü olmadan algoritma aynı düğümleri tekrar tekrar ziyaret ederek sonsuz döngüye girebilir."
+    },
+    {
+      q: "DFS ve BFS'in zaman karmaşıklığı nedir? (Adjacency list ile)",
+      options: ["O(V)", "O(E)", "O(V+E)", "O(V*E)"],
+      correct: 2,
+      hint: "Hem düğümler hem kenarlar bir kez ziyaret edilir.",
+      explain: "Her düğüm bir kez ziyaret edilir (O(V)) ve her kenar bir kez incelenir (O(E)), toplamda O(V+E) olur."
+    },
+    {
+      q: "DFS ile BFS arasındaki temel fark nedir?",
+      options: [
+        "DFS sadece ağaçlarda çalışır",
+        "DFS derine iner, BFS seviye seviye genişler",
+        "BFS daha az bellek kullanır",
+        "Aralarında fark yoktur"
+      ],
+      correct: 1,
+      hint: "İsimlerindeki 'Depth' (derinlik) ve 'Breadth' (genişlik) kelimelerini düşün.",
+      explain: "DFS bulunduğu düğümden mümkün olduğunca derine inmeye çalışır (Stack). BFS ise seviye seviye, genişlemesine ilerler (Queue)."
+    },
+    {
+      q: "Iterative DFS implementasyonunda recursive çağrı yığını yerine ne kullanılır?",
+      options: ["Queue", "Açık (explicit) Stack veri yapısı", "Heap", "Hash table"],
+      correct: 1,
+      hint: "Recursive fonksiyonlar zaten arkada bir stack kullanır, bunu manuel yapmak istiyoruz.",
+      explain: "Iterative DFS'te, recursive çağrı yığınının yaptığı işi manuel olarak yönetmek için açık bir Stack veri yapısı (java.util.Stack gibi) kullanılır."
+    },
+    {
+      q: "BFS algoritmasının çalışma adımlarında 2. adım nedir?",
+      options: [
+        "Tüm düğümleri ziyaret edilmiş işaretle",
+        "Kuyruğun en üst (baştaki) elemanını al, ziyaret edilenler listesine ekle",
+        "Grafı yeniden oluştur",
+        "Negatif kenarları kontrol et"
+      ],
+      correct: 1,
+      hint: "FIFO mantığında kuyruğun başından eleman çıkarılır.",
+      explain: "BFS'te kuyruğun başındaki (en eski eklenen) eleman alınır, ziyaret edilenler listesine eklenir ve komşuları kuyruğa eklenir."
+    },
+    {
+      q: "Bir grafta DFS kullanarak bağlı bileşen (connected component) sayısı nasıl bulunur?",
+      options: [
+        "Sadece 1 kez DFS çalıştırarak",
+        "Ziyaret edilmemiş her düğümden yeni bir DFS başlatarak, başlatma sayısı bileşen sayısını verir",
+        "BFS kullanmadan bulunamaz",
+        "Kenar sayısına bakarak"
+      ],
+      correct: 1,
+      hint: "Her DFS çağrısı bir bileşeni tamamen gezer.",
+      explain: "Tüm düğümler gezilene kadar, ziyaret edilmemiş her düğümden yeni bir DFS başlatılır. Kaç kez yeni DFS başlatıldıysa, o kadar bağlı bileşen vardır."
+    },
+    {
+      q: "DFS'in bir graf üzerinde kullanım alanlarından biri hangisidir?",
+      options: ["Sadece sıralama", "Topological sort ve döngü tespiti", "Sadece toplam alma", "Sadece string işleme"],
+      correct: 1,
+      hint: "Yönlü asiklik graflarda (DAG) sıralama problemi.",
+      explain: "DFS, yönlü graflarda topological sıralama yapmak ve grafta döngü olup olmadığını tespit etmek için kullanılır."
+    }
+  ],
+  "Dijkstra": [
+    {
+      q: "Dijkstra algoritması neden negatif ağırlıklı kenarlarla çalışmaz?",
+      options: [
+        "Bellek yetersiz kalır",
+        "İşlenmiş (visited) bir düğüm tekrar güncellenmez, ama negatif kenar sonradan daha kısa yol sunabilir",
+        "Negatif sayılar heap'te saklanamaz",
+        "Sonsuz döngüye girer"
+      ],
+      correct: 1,
+      hint: "Dijkstra greedy çalışır ve bir düğümü 'kesinleşti' kabul eder.",
+      explain: "Dijkstra bir düğümü işledikten sonra ona bir daha dönmez ('kesin en kısa' kabul eder). Negatif kenar varsa, sonradan daha kısa bir yol bulunabilir ama algoritma bunu göz ardı eder."
+    },
+    {
+      q: "Dijkstra'da Binary Heap kullanılırsa zaman karmaşıklığı nedir?",
+      options: ["Theta(V^3)", "Theta(V*E)", "Theta(E log V)", "Theta(V+E)"],
+      correct: 2,
+      hint: "Her kenar için bir insert/extract işlemi, her biri log V sürer.",
+      explain: "Her düğüm 1 kez extract edilir (V log V) ve her kenar 1 kez insert edilir (E log V), toplam Theta(E log V)."
+    },
+    {
+      q: "Dijkstra algoritmasının ana çalışma mantığı nedir?",
+      options: [
+        "Tüm kenarları |V|-1 kez tara",
+        "Her adımda ziyaret edilmemiş düğümler arasında mesafesi en küçük olanı seç ve komşularını güncelle",
+        "Tüm düğüm çiftleri için ara nokta dene",
+        "Bileşenleri paralel büyüt"
+      ],
+      correct: 1,
+      hint: "Greedy yaklaşım: her zaman en yakın olanı seç.",
+      explain: "Dijkstra greedy bir algoritmadır: her adımda mesafesi en küçük olan ziyaret edilmemiş düğümü seçer (min-heap ile) ve komşularına olan mesafeleri günceller."
+    },
+    {
+      q: "Dijkstra algoritmasında bir düğüm 'visited=true' olarak işaretlendikten sonra ne olur?",
+      options: [
+        "Tekrar işlenebilir",
+        "Bir daha hiç işlenmez, mesafesi kesinleşmiş kabul edilir",
+        "Silinir",
+        "Komşuları silinir"
+      ],
+      correct: 1,
+      hint: "Greedy algoritmalar geri dönüş yapmaz.",
+      explain: "Dijkstra greedy olduğu için, bir düğüm işlendiğinde (extract edildiğinde) o düğümün mesafesi 'kesin en kısa yol' olarak kabul edilir ve bir daha güncellenmez."
+    },
+    {
+      q: "Dijkstra'nın bellek karmaşıklığı nedir?",
+      options: ["Theta(1)", "Theta(V)", "Theta(E)", "Theta(V^2)"],
+      correct: 1,
+      hint: "Sadece mesafe dizisi ve heap tutuluyor.",
+      explain: "Dijkstra sadece her düğüm için bir mesafe değeri (dist[] dizisi) ve bir min-heap tutar, bu da Theta(V) bellek gerektirir."
+    },
+    {
+      q: "Dijkstra algoritması hangi tür graf üzerinde çalışabilir?",
+      options: [
+        "Sadece yönsüz graflar",
+        "Sadece yönlü graflar",
+        "Hem yönlü hem yönsüz, pozitif ağırlıklı graflar",
+        "Sadece ağaç yapısındaki graflar"
+      ],
+      correct: 2,
+      hint: "Negatif kenar olmadığı sürece yön önemli değil.",
+      explain: "Dijkstra, ağırlıkları negatif olmadığı sürece hem yönlü hem yönsüz graflarda çalışabilir."
+    },
+    {
+      q: "Dijkstra algoritmasında min-heap'ten her çıkarma (extract-min) işleminin maliyeti nedir (Binary Heap ile)?",
+      options: ["O(1)", "O(log V)", "O(V)", "O(V^2)"],
+      correct: 1,
+      hint: "Binary heap'te extract-min işlemi ağacı yeniden düzenler.",
+      explain: "Binary Heap'te extract-min işlemi O(log V) sürer, çünkü heap'in yeniden düzenlenmesi (heapify) gerekir."
+    },
+    {
+      q: "Dijkstra algoritması GPS / harita uygulamalarında hangi amaçla kullanılır?",
+      options: [
+        "Trafik sıkışıklığını tahmin etmek için",
+        "İki nokta arasındaki en kısa/en hızlı rotayı bulmak için",
+        "Haritayı çizmek için",
+        "Hava durumu tahmini için"
+      ],
+      correct: 1,
+      hint: "Bu algoritmanın temel amacı 'en kısa yol' bulmaktır.",
+      explain: "Dijkstra, GPS navigasyon sistemlerinde iki nokta arasındaki en kısa veya en hızlı rotayı hesaplamak için yaygın olarak kullanılır."
+    },
+    {
+      q: "Dijkstra algoritmasında 'greedy' yaklaşım ne anlama gelir?",
+      options: [
+        "Tüm olası yolları dener",
+        "Her adımda o anki en iyi (en kısa mesafeli) seçimi yapar ve bunu kesin kabul eder",
+        "Rastgele düğüm seçer",
+        "Sonuçları geriye dönüp değiştirir"
+      ],
+      correct: 1,
+      hint: "Greedy = 'açgözlü', her adımda anlık en iyiyi seçer.",
+      explain: "Greedy yaklaşım, her adımda global optimumu garanti etmeden, o anki en iyi görünen seçimi yapar. Dijkstra'da bu, mesafesi en küçük olan düğümü seçip kesinleştirmektir."
+    }
+  ],
+  "Bellman-Ford": [
+    {
+      q: "Bellman-Ford algoritmasının zaman karmaşıklığı nedir?",
+      options: ["Theta(E log V)", "Theta(V * E)", "Theta(V^3)", "Theta(V + E)"],
+      correct: 1,
+      hint: "Dış döngü |V|-1 kez, iç döngü tüm kenarları (|E|) tarar.",
+      explain: "Bellman-Ford |V|-1 kez tüm |E| kenarı tarar. (|V|-1) * |E| ≈ Theta(V*E)."
+    },
+    {
+      q: "Bellman-Ford algoritması ____ kez tüm kenarları tarar (V = düğüm sayısı).",
+      options: ["V", "V-1", "V+1", "V^2"],
+      correct: 1,
+      hint: "Bir grafta en uzun yol en fazla V-1 kenar içerebilir.",
+      explain: "Bir grafta düğüm sayısı V iken, döngüsüz bir yol en fazla V-1 kenar içerir. Bu yüzden V-1 tur yeterlidir."
+    },
+    {
+      q: "Bellman-Ford'da V-1 turdan sonra hala güncelleme oluyorsa ne anlama gelir?",
+      options: [
+        "Algoritma hatalı çalışmış",
+        "Grafta negatif döngü var",
+        "Graf bağlantısız",
+        "Kaynak düğüm yanlış seçilmiş"
+      ],
+      correct: 1,
+      hint: "Negatif döngü varsa mesafeler sonsuza kadar azalabilir.",
+      explain: "Eğer V-1 turdan sonra bir tur daha yapıldığında hala güncelleme oluyorsa, bu grafta negatif döngü olduğunu gösterir - mesafeler sürekli azalabileceği için 'en kısa yol' tanımsızdır."
+    },
+    {
+      q: "Bellman-Ford'un Dijkstra'ya göre avantajı nedir?",
+      options: [
+        "Daha hızlıdır",
+        "Negatif ağırlıklı kenarlarla çalışır ve negatif döngü tespit eder",
+        "Daha az bellek kullanır",
+        "Sadece yönsüz graflarda çalışır"
+      ],
+      correct: 1,
+      hint: "Dijkstra'nın çalışmadığı durumu düşün.",
+      explain: "Bellman-Ford negatif ağırlıklı kenarlarla çalışabilir ve hatta negatif döngü olup olmadığını tespit edebilir, Dijkstra bunu yapamaz."
+    },
+    {
+      q: "dist[u] dizisi neyi temsil eder?",
+      options: [
+        "u düğümünün derecesi",
+        "Kaynak düğümden u düğümüne olan şu ana kadar bilinen en kısa mesafe",
+        "u düğümünün komşu sayısı",
+        "u düğümünün indeksi"
+      ],
+      correct: 1,
+      hint: "'dist' kelimesi 'distance' (mesafe) kelimesinden geliyor.",
+      explain: "dist[u], kaynak düğümden u düğümüne olan, algoritmanın o ana kadar bulduğu en kısa (en iyi) mesafeyi tutar. Algoritma ilerledikçe bu değer küçülerek güncellenir."
+    },
+    {
+      q: "Bellman-Ford'da negatif döngü kontrolü için kaçıncı tur kullanılır?",
+      options: ["1. tur", "V-1. tur", "V. tur (ekstra bir tur)", "Hiçbir tur, ayrı bir algoritma gerekir"],
+      correct: 2,
+      hint: "Normal V-1 turdan SONRA bir tur daha yapılır.",
+      explain: "V-1 normal turdan sonra, V. (ekstra) bir tur daha yapılır. Eğer bu turda hâlâ bir mesafe güncelleniyorsa, grafta negatif döngü olduğu anlaşılır."
+    },
+    {
+      q: "Bellman-Ford algoritmasının kontrol işlemi için kullanılan matris türü nedir?",
+      options: ["Adjacency list", "Adjacency matrix (bitişiklik matrisi)", "Incidence matrix", "Sparse matrix"],
+      correct: 1,
+      hint: "Notlarda 'bitişik matris' olarak geçiyor.",
+      explain: "Bellman-Ford'da kenar kontrolü için genellikle bitişiklik matrisi (adjacency matrix) kullanılır, böylece her kenar çifti kontrol edilebilir."
+    },
+    {
+      q: "Bellman-Ford algoritması hangi alanlarda Dijkstra'ya tercih edilir?",
+      options: [
+        "Hız öncelikli, basit graflarda",
+        "Negatif ağırlıklı kenarların olduğu ağ yönlendirme protokollerinde (örn. RIP)",
+        "Sadece ağaç yapısında",
+        "Hiçbir zaman tercih edilmez"
+      ],
+      correct: 1,
+      hint: "Negatif kenar gerektiren senaryoları düşün.",
+      explain: "Bellman-Ford, negatif ağırlıklı kenarlarla çalışabildiği için RIP (Routing Information Protocol) gibi ağ yönlendirme protokollerinde kullanılır."
+    },
+    {
+      q: "Bellman-Ford'da bir turda HİÇBİR mesafe güncellenmezse ne yapılabilir?",
+      options: [
+        "Algoritma hata verir",
+        "Algoritma erken sonlandırılabilir (early termination), çünkü daha fazla iyileşme olmayacaktır",
+        "Daha fazla tur eklenmelidir",
+        "Negatif döngü olduğu anlaşılır"
+      ],
+      correct: 1,
+      hint: "Eğer hiçbir değişiklik yoksa, algoritmanın devam etmesinin bir anlamı kalmaz.",
+      explain: "Bir turda hiçbir dist[] değeri güncellenmezse, bu mesafelerin zaten optimal olduğu anlamına gelir ve algoritma erken durdurulabilir (optimizasyon tekniği)."
+    }
+  ],
+  "Floyd-Warshall": [
+    {
+      q: "Floyd-Warshall algoritmasında en dış döngü hangi değişken olmalıdır?",
+      options: ["i", "j", "k (ara nokta)", "Sıra önemli değil"],
+      correct: 2,
+      hint: "dist[i][k] ve dist[k][j] değerlerinin GÜNCEL halini kullanman gerekiyor.",
+      explain: "k en dış döngüde olmalı, çünkü dist[i][k] ve dist[k][j] değerlerinin, k'nın önceki turlarda ara nokta olarak kullanılmasıyla güncellenmiş hallerini kullanmamız gerekir."
+    },
+    {
+      q: "Floyd-Warshall algoritmasının zaman karmaşıklığı nedir?",
+      options: ["O(V^2)", "O(V*E)", "O(V^3)", "O(E log V)"],
+      correct: 2,
+      hint: "3 iç içe döngü, her biri V kez çalışır.",
+      explain: "3 iç içe döngü (i, j, k) her biri V kez çalıştığı için toplam karmaşıklık O(V*V*V) = O(V^3)'tür."
+    },
+    {
+      q: "Floyd-Warshall'da köşegen elemanı (dist[i][i]) negatif çıkarsa ne anlama gelir?",
+      options: [
+        "Hesaplama hatası var",
+        "Grafta negatif döngü var",
+        "Graf bağlantısız",
+        "Hiçbir şey, normaldir"
+      ],
+      correct: 1,
+      hint: "Normalde dist[i][i] = 0 olmalı.",
+      explain: "Normalde bir düğümün kendine mesafesi 0 olmalıdır. Eğer negatif çıkıyorsa, o düğümden kendine giden bir döngünün mesafeyi azalttığı, yani negatif döngü olduğu anlaşılır."
+    },
+    {
+      q: "Floyd-Warshall'da güncelleme formülü hangisidir?",
+      options: [
+        "dist[i][j] = dist[i][k] * dist[k][j]",
+        "dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])",
+        "dist[i][j] = dist[i][k] - dist[k][j]",
+        "dist[i][j] = max(dist[i][j], dist[i][k] + dist[k][j])"
+      ],
+      correct: 1,
+      hint: "k üzerinden gitmek daha kısaysa güncelle.",
+      explain: "Eğer i'den k'ya ve k'dan j'ye giden yolların toplamı, i'den j'ye olan mevcut yoldan daha kısaysa, dist[i][j] bu yeni (daha kısa) değerle güncellenir."
+    },
+    {
+      q: "Floyd-Warshall hangi soruyu cevaplar?",
+      options: [
+        "Tek bir kaynaktan tüm düğümlere en kısa yol",
+        "Tüm düğüm çiftleri arasındaki en kısa yol",
+        "Grafın MST'si",
+        "Grafın Euler döngüsü var mı"
+      ],
+      correct: 1,
+      hint: "Dijkstra ve Bellman-Ford TEK kaynaktan çalışır, Floyd-Warshall ise...",
+      explain: "Floyd-Warshall, Dijkstra ve Bellman-Ford'dan farklı olarak TÜM düğüm çiftleri (i,j) arasındaki en kısa yolu aynı anda hesaplar."
+    },
+    {
+      q: "Floyd-Warshall'da başlangıç matrisinde dist[i][i] değeri nedir?",
+      options: ["sonsuz (INF)", "0", "1", "-1"],
+      correct: 1,
+      hint: "Bir düğümün kendine olan mesafesi ne olmalı?",
+      explain: "Bir düğümün kendine olan mesafesi her zaman 0'dır, bu yüzden başlangıç matrisinde köşegen elemanları 0 olarak ayarlanır."
+    },
+    {
+      q: "Floyd-Warshall'da başlangıç matrisinde doğrudan bağlı olmayan iki düğüm (i,j) arası mesafe ne olarak ayarlanır?",
+      options: ["0", "1", "sonsuz (INF)", "-1"],
+      correct: 2,
+      hint: "Henüz bir yol bilinmiyor demek...",
+      explain: "İki düğüm arasında doğrudan bir kenar yoksa, başlangıçta mesafe sonsuz (INF) olarak ayarlanır; algoritma ilerledikçe ara düğümler üzerinden bu değer güncellenebilir."
+    },
+    {
+      q: "Floyd-Warshall algoritmasını V kez Dijkstra çalıştırmaya göre ne zaman tercih ederiz?",
+      options: [
+        "Asla tercih edilmez",
+        "Graf çok seyrekse",
+        "Anlaşılması/uygulanması kolaylığı isteniyorsa ve graf küçük/orta boyutluysa",
+        "Sadece negatif kenar olduğunda"
+      ],
+      correct: 2,
+      hint: "Floyd-Warshall'ın avantajı basitliğidir.",
+      explain: "Floyd-Warshall, anlaşılması ve uygulanması kolay olduğu için, özellikle küçük/orta boyutlu graflarda V kez Dijkstra çalıştırmaya pratik bir alternatif sunar."
+    },
+    {
+      q: "Floyd-Warshall algoritması yönlü graf üzerinde çalışabilir mi?",
+      options: ["Hayır, sadece yönsüz graflarda çalışır", "Evet, hem yönlü hem yönsüz graflarda çalışır", "Sadece ağaçlarda çalışır", "Sadece tam graflarda çalışır"],
+      correct: 1,
+      hint: "Matris yapısı her iki yönü de ayrı ayrı tutabilir.",
+      explain: "Floyd-Warshall hem yönlü hem yönsüz graflarda çalışabilir, çünkü dist[i][j] ve dist[j][i] ayrı ayrı tutulup güncellenebilir."
+    }
+  ],
+  "MST (Kruskal/Prim/Boruvka)": [
+    {
+      q: "Kruskal algoritmasının zaman karmaşıklığı neden Theta(E log V) dir?",
+      options: [
+        "Sadece Union-Find maliyetinden gelir",
+        "Sadece DFS maliyetinden gelir",
+        "Kenarları sıralama maliyeti domine eder, Union-Find ihmal edilebilir",
+        "Düğüm sayısının küpünden gelir"
+      ],
+      correct: 2,
+      hint: "Sıralama O(E log E) yaklaşık olarak O(E log V)'ye eşittir.",
+      explain: "Kenarları sıralamak O(E log E) ≈ O(E log V) sürer. Union-Find işlemleri amortized olarak neredeyse O(1) olduğu için toplam karmaşıklığı domine etmez."
+    },
+    {
+      q: "Union-Find'de alpha(|V|) ifadesi neyi temsil eder?",
+      options: [
+        "Ackermann fonksiyonunun tersi, pratikte sabit gibi davranan çok yavaş büyüyen bir değer",
+        "Düğüm sayısının logaritması",
+        "Kenar sayısının karekökü",
+        "Graf yoğunluğu"
+      ],
+      correct: 0,
+      hint: "Path compression ve union by rank ile bu değer pratikte 4'ü geçmez.",
+      explain: "alpha(n), Ackermann fonksiyonunun tersidir ve inanılmaz yavaş büyür. Path compression + union by rank optimizasyonlarıyla, gerçekçi V değerleri için alpha(V) ≈ 4 gibi sabit bir değer olur."
+    },
+    {
+      q: "Boruvka algoritmasının Kruskal ve Prim'den temel farkı nedir?",
+      options: [
+        "Negatif kenarlarla çalışabilir",
+        "Tüm bileşenler aynı anda (paralel) büyür",
+        "Sadece yönlü graflarda çalışır",
+        "MST bulmaz, sadece kontrol eder"
+      ],
+      correct: 1,
+      hint: "Her bileşen kendi 'en ucuz çıkış kenarını' aynı anda bulur.",
+      explain: "Boruvka'da her bileşen aynı anda kendini başka bileşene bağlayan en ucuz kenarı bulur ve bu kenarlar aynı anda MST'ye eklenir. Bu, paralel/dağıtık sistemlerde büyük avantaj sağlar."
+    },
+    {
+      q: "Prim algoritması hangi veri yapısını temel olarak kullanır?",
+      options: ["Union-Find", "Min-Heap", "Stack", "Queue"],
+      correct: 1,
+      hint: "Her adımda 'en küçük ağırlıklı komşu kenarı' bulmak gerekiyor.",
+      explain: "Prim algoritması, ağaca eklenebilecek en küçük ağırlıklı kenarı bulmak için Min-Heap kullanır."
+    },
+    {
+      q: "Kruskal algoritması seyrek graflarda neden avantajlıdır?",
+      options: [
+        "Seyrek grafta kenar sayısı (E) düşük olduğu için sıralama maliyeti küçük kalır",
+        "Seyrek graflarda Union-Find çalışmaz",
+        "Seyrek graflarda döngü olmaz",
+        "Hiçbir avantajı yoktur"
+      ],
+      correct: 0,
+      hint: "Kruskal'ın maliyeti E log V'ye bağlı.",
+      explain: "Kruskal'ın maliyeti kenar sayısına (E) bağlıdır (E log V). Seyrek graflarda E küçük olduğu için bu algoritma hızlı çalışır."
+    },
+    {
+      q: "Spanning Tree'nin tanımı nedir?",
+      options: [
+        "Grafın en kısa yolunu içeren alt graf",
+        "Grafın tüm düğümlerini içeren, |V|-1 kenarlı, döngüsüz bağlı alt graf",
+        "Grafın tüm kenarlarını içeren alt graf",
+        "Grafın sadece yapraklarını içeren alt graf"
+      ],
+      correct: 1,
+      hint: "'Spanning' = kapsayan, tüm düğümlere yayılan.",
+      explain: "Bir Spanning Tree, grafın TÜM düğümlerini içerir, tam olarak |V|-1 kenara sahiptir ve döngü içermez (bağlı bir ağaçtır)."
+    },
+    {
+      q: "MST'nin (Minimum Spanning Tree) bir grafta birden fazla olası çözümü olabilir mi?",
+      options: [
+        "Hayır, her graf için tek bir MST vardır",
+        "Evet, özellikle eşit ağırlıklı kenarlar varsa birden fazla MST olabilir",
+        "Sadece yönlü graflarda birden fazla olabilir",
+        "MST hiçbir zaman benzersiz değildir"
+      ],
+      correct: 1,
+      hint: "Eğer iki kenarın ağırlığı eşitse, hangisinin seçileceği değişebilir.",
+      explain: "Eğer grafta eşit ağırlıklı kenarlar varsa, farklı seçimlerle aynı toplam ağırlığa sahip birden fazla MST oluşabilir. Ağırlıklar hepsi farklıysa MST benzersizdir."
+    },
+    {
+      q: "Kruskal algoritmasında bir kenar seçildiğinde NEDEN reddedilebilir?",
+      options: [
+        "Ağırlığı çok büyükse",
+        "Seçilirse döngü oluşturacaksa (kenarın iki ucu aynı bileşendeyse)",
+        "Rastgele reddedilir",
+        "Sadece son kenar reddedilir"
+      ],
+      correct: 1,
+      hint: "Union-Find ile kontrol edilen şey budur.",
+      explain: "Eğer bir kenarın iki ucu (find ile kontrol edilince) zaten aynı bileşendeyse, bu kenarı eklemek döngü oluşturur, bu yüzden reddedilir."
+    },
+    {
+      q: "MST algoritmaları (Kruskal, Prim, Boruvka) hangi algoritma stratejisi kategorisine girer?",
+      options: ["Dynamic Programming", "Greedy (Açgözlü)", "Divide & Conquer", "Backtracking"],
+      correct: 1,
+      hint: "Her adımda 'o anki en iyi/ucuz' seçim yapılıyor.",
+      explain: "MST algoritmaları, her adımda yerel olarak en iyi (en ucuz) seçimi yaparak global optimuma ulaşan Greedy (açgözlü) algoritmalardır."
+    },
+    {
+      q: "MST'nin gerçek hayatta kullanım alanlarından biri hangisidir?",
+      options: [
+        "Şehirler arası en ucuz fiber optik ağ döşeme planı",
+        "Bir metnin sıkıştırılması",
+        "Veritabanı indeksleme",
+        "Görüntü tanıma"
+      ],
+      correct: 0,
+      hint: "Tüm noktaları en az maliyetle birbirine bağlamak gereken bir senaryo düşün.",
+      explain: "MST, telekomünikasyon ağları (örneğin şehirleri en düşük maliyetle birbirine bağlayan fiber optik kablo döşeme planı) gibi altyapı problemlerinde sıkça kullanılır."
+    },
+    {
+      q: "Prim algoritmasının zaman karmaşıklığı (Binary Heap ile) nedir?",
+      options: ["O(V^2)", "O(E log V)", "O(V^3)", "O(E^2)"],
+      correct: 1,
+      hint: "Kruskal ile aynı karmaşıklık sınıfındadır.",
+      explain: "Prim algoritması Binary Heap kullanıldığında O(E log V) karmaşıklığına sahiptir, bu Kruskal'ın karmaşıklığıyla aynı sınıftadır."
+    }
+  ],
+  "P-NP-NP-Complete": [
+    {
+      q: "Hangisi NP-Complete olduğu kanıtlanmış ilk problemdir?",
+      options: ["TSP", "Knapsack", "3-SAT", "Vertex Cover"],
+      correct: 2,
+      hint: "1971'de Cook-Levin Teoremi ile kanıtlandı.",
+      explain: "3-SAT, Cook-Levin Teoremi (1971) ile NP-Complete olduğu kanıtlanan ilk problemdir. Diğer tüm NP-Complete problemler buna indirgenerek kanıtlanır."
+    },
+    {
+      q: "Bir problem NP-Complete ise hangisi DOĞRU DEĞİLDİR?",
+      options: [
+        "NP'dedir",
+        "NP'deki her problem buna indirgenebilir",
+        "Polinom zamanda kesin çözümü bilinmektedir",
+        "Çözümü polinom zamanda doğrulanabilir"
+      ],
+      correct: 2,
+      hint: "P=NP henüz kanıtlanmadı.",
+      explain: "NP-Complete problemler için bilinen polinom zamanlı kesin algoritma YOKTUR (P=NP kanıtlanmadıkça). Diğer üç ifade NP-Complete'in tanımının parçasıdır."
+    },
+    {
+      q: "Bir A <=p B indirgemesi ne anlama gelir?",
+      options: [
+        "A, B'den daha zordur",
+        "A problemi, B'yi çözen bir algoritma + polinom ek işlemle çözülebilir",
+        "B problemi artık çözülemez",
+        "A ve B aynı algoritmadır"
+      ],
+      correct: 1,
+      hint: "İndirgeme bir 'zorluk ilişkisi' kurar, çözümü vermez.",
+      explain: "A <=p B, A problemini B'yi çözen bir algoritma kullanarak (üzerine polinom zamanlı ek işlemle) çözebileceğimiz anlamına gelir. Bu A'nın B'den daha zor OLMADIĞINI gösterir."
+    },
+    {
+      q: "Knapsack probleminin 'karar problemi' versiyonu nasıl ifade edilir?",
+      options: [
+        "Maksimum değer kaçtır?",
+        "Kapasiteyi aşmadan değeri en az X yapacak bir seçim var mı?",
+        "Kaç farklı eşya kombinasyonu vardır?",
+        "Eşyaların ağırlıkları toplamı kaçtır?"
+      ],
+      correct: 1,
+      hint: "Karar problemlerinin cevabı sadece EVET/HAYIR olur.",
+      explain: "Karar problemleri (decision problem) sadece EVET/HAYIR cevaplı olur. 'En az X değer elde edilebilir mi?' sorusu bu formattadır, oysa 'maksimum değer kaçtır' bir optimizasyon sorusudur."
+    },
+    {
+      q: "Graf renklendirme probleminde K=2 (iki renkle boyanabilirlik) hangi sınıftadır?",
+      options: ["NP-Complete", "NP-Hard", "P (kolay, bipartite kontrol)", "Hesaplanamaz"],
+      correct: 2,
+      hint: "K>=3 için problem NP-Complete olur, ama K=2 özel bir durumdur.",
+      explain: "K=2 ile renklendirme, grafın bipartite (iki parçalı) olup olmadığını kontrol etmeye eşdeğerdir ve bu polinom zamanda (BFS/DFS ile) yapılabilir, yani P sınıfındadır. K>=3 için problem NP-Complete'tir."
+    },
+    {
+      q: "Vertex Cover probleminin amacı nedir?",
+      options: [
+        "Grafın tüm düğümlerini kapsayan minimum kenar kümesi bulmak",
+        "Grafın tüm kenarlarını kapsayan minimum düğüm kümesi bulmak",
+        "Grafın bağlı olup olmadığını kontrol etmek",
+        "Grafın en uzun yolunu bulmak"
+      ],
+      correct: 1,
+      hint: "'Kapsamak' = her kenarın en az bir ucu seçilen kümede olmalı.",
+      explain: "Vertex Cover, her kenarın en az bir ucunun seçilen küme içinde olacağı şekilde minimum sayıda düğüm seçme problemidir."
+    },
+    {
+      q: "Hamilton döngüsü ile TSP arasındaki temel fark nedir?",
+      options: [
+        "Hamilton döngüsü ağırlıksız grafta 'böyle bir döngü var mı' sorusudur, TSP en kısa olanı arar",
+        "Hamilton döngüsü sadece yönlü graflarda tanımlıdır",
+        "TSP'de her düğüm birden fazla kez ziyaret edilebilir",
+        "Aralarında hiçbir fark yoktur"
+      ],
+      correct: 0,
+      hint: "Biri karar problemi, diğeri optimizasyon problemi.",
+      explain: "Hamilton döngüsü problemi 'her düğümü 1 kez ziyaret eden kapalı bir yol VAR MI?' (karar problemi) sorar. TSP ise ağırlıklı grafta bu tür yolların EN KISA olanını arar (optimizasyon problemi)."
+    },
+    {
+      q: "NP-Hard problemlerin NP-Complete problemlerden farkı nedir?",
+      options: [
+        "NP-Hard problemler her zaman daha kolaydır",
+        "NP-Hard problemler NP'de olmak zorunda değildir, yani çözümleri her zaman polinom zamanda doğrulanamayabilir",
+        "Aralarında hiçbir fark yoktur",
+        "NP-Hard problemler her zaman çözülebilir"
+      ],
+      correct: 1,
+      hint: "NP-Complete = NP-Hard ∩ NP.",
+      explain: "NP-Hard problemler, NP'deki her problemin onlara indirgenebileceği problemlerdir ama kendileri NP'de OLMAK ZORUNDA DEĞİLDİR. NP-Complete ise hem NP-Hard hem de NP'de olan problemlerdir."
+    },
+    {
+      q: "Eğer biri NP-Complete bir problemi polinom zamanda çözen bir algoritma bulursa ne olur?",
+      options: [
+        "Hiçbir şey değişmez, sadece o problem çözülür",
+        "P=NP kanıtlanmış olur ve TÜM NP problemleri polinom zamanda çözülebilir hale gelir",
+        "Sadece o problem ailesindekiler çözülür",
+        "Problem NP-Hard olur"
+      ],
+      correct: 1,
+      hint: "NP-Complete problemler birbirine indirgenebilir olduğu için zincirleme bir etki olur.",
+      explain: "NP-Complete problemler birbirine indirgenebilir olduğu için, birini polinom zamanda çözen bir algoritma bulunursa, bu algoritma kullanılarak TÜM NP problemleri polinom zamanda çözülebilir hale gelir - yani P=NP kanıtlanmış olur."
+    },
+    {
+      q: "Bir karar probleminin (decision problem) cevabı nasıl olmalıdır?",
+      options: ["Bir sayı", "Sadece 'evet' veya 'hayır'", "Bir liste", "Bir graf"],
+      correct: 1,
+      hint: "'Decision' = karar, ikili bir sonuç gerektirir.",
+      explain: "Karar problemleri (decision problems), cevabı yalnızca 'evet' ya da 'hayır' olan problemlerdir. Örneğin 'Bu graf 3 renkle boyanabilir mi?' bir karar problemidir."
+    },
+    {
+      q: "Optimizasyon problemi ile karar problemi arasındaki ilişki nedir?",
+      options: [
+        "Hiçbir ilişkileri yoktur",
+        "Optimizasyon problemleri genellikle karar problemlerine çevrilip (binary search ile) çözülebilir",
+        "Optimizasyon problemleri her zaman daha kolaydır",
+        "Karar problemleri her zaman optimizasyon problemlerinden daha zordur"
+      ],
+      correct: 1,
+      hint: "'En kısa tur kaç km' sorusunu 'X km'den kısa tur var mı' sorularına çevirip binary search yapabilirsin.",
+      explain: "Optimizasyon problemleri (örn. 'en kısa tur kaç km'), farklı X değerleri için karar problemine ('X km'den kısa tur var mı?') çevrilip binary search ile optimal değer bulunabilir."
+    }
+  ],
+  "Dinamik Programlama": [
+    {
+      q: "Dinamik programlamanın (DP) çalışabilmesi için bir problemde hangi iki özellik bulunmalıdır?",
+      options: [
+        "Greedy seçim ve döngüsüzlük",
+        "Optimal alt yapı ve çakışan alt problemler",
+        "Negatif ağırlık ve simetri",
+        "Polinom zaman ve NP üyeliği"
+      ],
+      correct: 1,
+      hint: "Fibonacci örneğindeki tekrar eden alt çağrıları düşün.",
+      explain: "DP için problem (1) Optimal Alt Yapı (büyük problemin çözümü alt problemlerin çözümlerinden oluşmalı) ve (2) Çakışan Alt Problemler (aynı alt problem tekrar tekrar çözülüyor) özelliklerine sahip olmalıdır."
+    },
+    {
+      q: "Top-Down DP (Memoization) ile Bottom-Up DP (Tabulation) arasındaki fark nedir?",
+      options: [
+        "İkisi de aynı şeydir",
+        "Top-Down recursive + saklama yapar, Bottom-Up döngü ile alttan başlar",
+        "Top-Down daha fazla bellek kullanır her zaman",
+        "Bottom-Up sadece Fibonacci için kullanılır"
+      ],
+      correct: 1,
+      hint: "'Top-Down' = üstten alta (recursive), 'Bottom-Up' = alttan üste (iteratif).",
+      explain: "Top-Down (Memoization): recursive çağrı yapılır, sonuçlar bir diziye/haritaya kaydedilir (cache). Bottom-Up (Tabulation): küçük alt problemlerden başlanıp döngüyle büyük probleme ulaşılır."
+    },
+    {
+      q: "Naive recursive Fibonacci algoritmasının karmaşıklığı nedir?",
+      options: ["O(n)", "O(log n)", "O(n^2)", "O(2^n)"],
+      correct: 3,
+      hint: "Her çağrı 2 alt çağrı üretir ve aynı alt problemler tekrar tekrar çözülür.",
+      explain: "fib(n) = fib(n-1) + fib(n-2) şeklindeki naive recursive çözümde, aynı alt problemler tekrar tekrar hesaplandığı için karmaşıklık O(2^n)'dir."
+    },
+    {
+      q: "DP ile Greedy algoritmaların temel farkı nedir?",
+      options: [
+        "Greedy her zaman alt problemleri saklar, DP saklamaz",
+        "Greedy her adımda anlık en iyi seçimi yapar, DP tüm alt problemleri çözüp en iyisini seçer",
+        "İkisi aynı algoritma türüdür",
+        "DP sadece grafiklerde kullanılır"
+      ],
+      correct: 1,
+      hint: "Kruskal/Prim greedy'dir. Knapsack DP gerektirir.",
+      explain: "Greedy algoritmalar (Kruskal, Prim, Dijkstra) her adımda 'anlık en iyi' seçimi yapar ve bu bazı problemlerde global optimal sonucu garanti eder. DP ise (Knapsack, LCS gibi) tüm alt problemleri çözüp saklayarak optimal sonuca ulaşır - çünkü greedy bu problemlerde yetersiz kalır."
+    },
+    {
+      q: "Space-Optimized Fibonacci DP çözümünün bellek karmaşıklığı nedir?",
+      options: ["O(1)", "O(n)", "O(log n)", "O(n^2)"],
+      correct: 0,
+      hint: "Sadece son 2 değeri saklamak yeterli.",
+      explain: "Space-optimized yaklaşımda sadece son iki Fibonacci değeri (prev1, prev2) tutulur, tüm diziyi saklamaya gerek yoktur, bu yüzden bellek karmaşıklığı O(1)'dir."
+    },
+    {
+      q: "Longest Common Subsequence (LCS) probleminde dp[i][j] neyi temsil eder?",
+      options: [
+        "İki string'in toplam uzunluğu",
+        "X[1..i] ve Y[1..j] dizilerinin en uzun ortak alt dizisinin uzunluğu",
+        "İki string'in farkı",
+        "Bir string'in tersi"
+      ],
+      correct: 1,
+      hint: "LCS = 'en uzun ortak alt dizi'.",
+      explain: "dp[i][j], X dizisinin ilk i karakteri ile Y dizisinin ilk j karakteri arasındaki en uzun ortak alt dizinin (subsequence) uzunluğunu tutar."
+    },
+    {
+      q: "DP'de 'optimal alt yapı' (optimal substructure) ne anlama gelir?",
+      options: [
+        "Problem hiç çözülemez",
+        "Büyük problemin optimal çözümü, alt problemlerin optimal çözümlerinden oluşur",
+        "Tüm alt problemler aynı sonucu verir",
+        "Problem sadece tek bir şekilde çözülebilir"
+      ],
+      correct: 1,
+      hint: "'Optimal' kelimesi her seviyede geçerli olmalı.",
+      explain: "Optimal alt yapı, büyük bir problemin en iyi (optimal) çözümünün, küçük alt problemlerin en iyi çözümlerinin birleşiminden oluşabilmesi anlamına gelir."
+    },
+    {
+      q: "Knapsack probleminin DP ile çözümü neden 'pseudo-polinom' olarak adlandırılır?",
+      options: [
+        "Çünkü hiç polinom değildir",
+        "Çünkü karmaşıklık O(n*W) olup W (kapasite) değerine bağlıdır, W çok büyükse pratikte yetersiz kalabilir",
+        "Çünkü negatif sayılarla çalışmaz",
+        "Çünkü sadece küçük n değerleri için çalışır"
+      ],
+      correct: 1,
+      hint: "W'nin büyüklüğü, n'in basamak sayısına göre üstel büyüyebilir.",
+      explain: "Knapsack DP çözümünün karmaşıklığı O(n*W)'dır. W, girdinin sayısal değeridir (basamak sayısı değil), bu yüzden W çok büyük olduğunda algoritma 'gerçek' polinom zamanlı değil, 'pseudo-polinom' olarak kabul edilir."
+    },
+    {
+      q: "Edit Distance probleminde dp[i][j] genellikle neyi temsil eder?",
+      options: [
+        "İki string'in toplam karakter sayısı",
+        "X[1..i]'yi Y[1..j]'ye çevirmek için gereken minimum işlem (ekleme/silme/değiştirme) sayısı",
+        "İki string'in eşit olup olmadığı",
+        "Sadece ekleme işlemlerinin sayısı"
+      ],
+      correct: 1,
+      hint: "Bu problem genelde yazım denetleyicilerde (spell checker) kullanılır.",
+      explain: "Edit Distance'ta dp[i][j], X dizisinin ilk i karakterini Y dizisinin ilk j karakterine dönüştürmek için gereken minimum ekleme, silme veya değiştirme işlem sayısını tutar."
+    },
+    {
+      q: "Bottom-Up DP (Tabulation) yaklaşımının Top-Down'a (Memoization) göre bir avantajı nedir?",
+      options: [
+        "Her zaman daha az kod gerektirir",
+        "Recursive çağrı yığını (call stack) overhead'i ve stack overflow riski olmaz",
+        "Her zaman daha az bellek kullanır",
+        "Sadece Fibonacci için çalışır"
+      ],
+      correct: 1,
+      hint: "Top-Down recursive çağrı yapar, bu derin recursion'larda sorun olabilir.",
+      explain: "Bottom-Up yaklaşım döngü kullanarak alttan üste ilerlediği için, Top-Down'daki gibi derin recursive çağrılardan kaynaklanan stack overflow riski taşımaz."
+    }
+  ]
+};
+
+// ============ STATE ============
+let selectedTopics = new Set();
+let activeQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let answered = false;
+let hintShown = false;
+let topicScores = {};
+
+// ============ TOPIC SELECTION SCREEN ============
+function renderTopicSelect() {
+  const grid = document.getElementById('topic-grid');
+  grid.innerHTML = '';
+
+  Object.keys(QUESTION_BANK).forEach(topic => {
+    const count = QUESTION_BANK[topic].length;
+    const chip = document.createElement('div');
+    chip.className = 'topic-chip' + (selectedTopics.has(topic) ? ' active' : '');
+    chip.innerHTML = `
+      <div class="topic-left">
+        <div class="check-icon">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 8L6.5 11.5L13 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="topic-name">${topic}</span>
+      </div>
+      <span class="topic-count">${count} soru</span>
+    `;
+    chip.addEventListener('click', () => {
+      if (selectedTopics.has(topic)) {
+        selectedTopics.delete(topic);
+      } else {
+        selectedTopics.add(topic);
+      }
+      renderTopicSelect();
+    });
+    grid.appendChild(chip);
+  });
+
+  let total = 0;
+  selectedTopics.forEach(t => total += QUESTION_BANK[t].length);
+
+  const totalInfo = document.getElementById('total-info');
+  const startBtn = document.getElementById('start-btn');
+
+  if (total === 0) {
+    totalInfo.textContent = 'Henüz konu seçilmedi';
+    startBtn.disabled = true;
+  } else {
+    totalInfo.textContent = `${selectedTopics.size} konu, toplam ${total} soru seçildi`;
+    startBtn.disabled = false;
+  }
+}
+
+document.getElementById('start-btn').addEventListener('click', startQuiz);
+
+function startQuiz() {
+  activeQuestions = [];
+  selectedTopics.forEach(topic => {
+    QUESTION_BANK[topic].forEach(q => {
+      activeQuestions.push({ ...q, topic });
+    });
+  });
+
+  // Shuffle
+  for (let i = activeQuestions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [activeQuestions[i], activeQuestions[j]] = [activeQuestions[j], activeQuestions[i]];
+  }
+
+  currentIndex = 0;
+  score = 0;
+  topicScores = {};
+  selectedTopics.forEach(t => topicScores[t] = { correct: 0, total: 0 });
+
+  document.getElementById('screen-select').classList.add('hidden');
+  document.getElementById('screen-results').classList.add('hidden');
+  document.getElementById('screen-quiz').classList.remove('hidden');
+
+  renderQuestion();
+}
+
+// ============ QUIZ SCREEN ============
+function renderQuestion() {
+  answered = false;
+  hintShown = false;
+
+  const item = activeQuestions[currentIndex];
+
+  document.getElementById('q-counter').textContent = `Soru ${currentIndex + 1} / ${activeQuestions.length}`;
+  document.getElementById('q-score').textContent = `Skor: ${score}`;
+  document.getElementById('progress-fill').style.width = (currentIndex / activeQuestions.length * 100) + '%';
+  document.getElementById('q-topic-tag').textContent = item.topic;
+  document.getElementById('q-text').textContent = item.q;
+
+  const optionsDiv = document.getElementById('q-options');
+  optionsDiv.innerHTML = '';
+  item.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => selectAnswer(i));
+    optionsDiv.appendChild(btn);
+  });
+
+  document.getElementById('hint-row').classList.remove('hidden');
+  document.getElementById('hint-box').classList.add('hidden');
+  document.getElementById('info-card-wrap').innerHTML = '';
+  document.getElementById('next-btn').classList.add('hidden');
+}
+
+document.getElementById('hint-btn').addEventListener('click', () => {
+  hintShown = !hintShown;
+  const box = document.getElementById('hint-box');
+  if (hintShown) {
+    box.textContent = '💡 ' + activeQuestions[currentIndex].hint;
+    box.classList.remove('hidden');
+  } else {
+    box.classList.add('hidden');
+  }
+});
+
+function selectAnswer(selectedIdx) {
+  if (answered) return;
+  answered = true;
+
+  const item = activeQuestions[currentIndex];
+  const isCorrect = selectedIdx === item.correct;
+
+  if (isCorrect) {
+    score++;
+  }
+
+  topicScores[item.topic].total++;
+  if (isCorrect) topicScores[item.topic].correct++;
+
+  const optionsDiv = document.getElementById('q-options');
+  const buttons = optionsDiv.querySelectorAll('.option');
+  buttons.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === item.correct) {
+      btn.classList.add('correct');
+    } else if (i === selectedIdx) {
+      btn.classList.add('wrong');
+    }
+  });
+
+  document.getElementById('hint-row').classList.add('hidden');
+  document.getElementById('hint-box').classList.add('hidden');
+
+  const infoWrap = document.getElementById('info-card-wrap');
+  const card = document.createElement('div');
+  card.className = 'info-card ' + (isCorrect ? 'is-correct' : 'is-wrong');
+  card.innerHTML = `
+    <span class="result-label">${isCorrect ? '✓ Doğru!' : '✗ Yanlış'}</span>
+    ${item.explain}
+  `;
+  infoWrap.innerHTML = '';
+  infoWrap.appendChild(card);
+
+  document.getElementById('q-score').textContent = `Skor: ${score}`;
+
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.classList.remove('hidden');
+  nextBtn.textContent = (currentIndex < activeQuestions.length - 1) ? 'Sonraki Soru →' : 'Sonuçları Gör';
+}
+
+document.getElementById('next-btn').addEventListener('click', () => {
+  if (currentIndex < activeQuestions.length - 1) {
+    currentIndex++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+});
+
+// ============ RESULTS SCREEN ============
+function showResults() {
+  document.getElementById('screen-quiz').classList.add('hidden');
+  document.getElementById('screen-results').classList.remove('hidden');
+
+  const pct = Math.round((score / activeQuestions.length) * 100);
+  document.getElementById('result-score').textContent = `${score} / ${activeQuestions.length}`;
+  document.getElementById('result-pct').textContent = `%${pct}`;
+
+  const breakdown = document.getElementById('topic-breakdown');
+  breakdown.innerHTML = '';
+  Object.keys(topicScores).forEach(topic => {
+    const ts = topicScores[topic];
+    if (ts.total === 0) return;
+    const row = document.createElement('div');
+    row.className = 'topic-breakdown-row';
+    row.innerHTML = `<span>${topic}</span><span>${ts.correct} / ${ts.total}</span>`;
+    breakdown.appendChild(row);
+  });
+}
+
+document.getElementById('restart-same').addEventListener('click', startQuiz);
+
+document.getElementById('restart-new').addEventListener('click', () => {
+  document.getElementById('screen-results').classList.add('hidden');
+  document.getElementById('screen-select').classList.remove('hidden');
+  renderTopicSelect();
+});
+
+// ============ INIT ============
+renderTopicSelect();
+</script>
+</body>
+</html>

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algoritma Analizi - Eşleştirme Oyunu</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --card: #1a1d24;
+    --card-border: #2a2e38;
+    --text: #e8e9ed;
+    --text-secondary: #9aa0ab;
+    --accent: #5b8cff;
+    --success-bg: #16321f;
+    --success-border: #2f8a4f;
+    --success-text: #6fdc8c;
+    --danger-bg: #3a1c1c;
+    --danger-border: #b3413e;
+    --danger-text: #ff8a85;
+    --chip-bg: #20242c;
+    --chip-active: #2c3450;
+    --pending-bg: #2a2517;
+    --pending-border: #c4923a;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding: 16px;
+  }
+
+  .container { max-width: 760px; margin: 0 auto; }
+
+  h1 { font-size: 21px; font-weight: 600; margin: 0 0 4px; }
+  .subtitle { color: var(--text-secondary); font-size: 14px; margin: 0 0 20px; }
+
+  /* ===== Stage selection screen ===== */
+  .stage-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+
+  .stage-card {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--chip-bg); border: 1px solid var(--card-border);
+    border-radius: 10px; padding: 14px 16px; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .stage-card:hover { border-color: var(--accent); }
+  .stage-card.locked { opacity: 0.45; cursor: not-allowed; }
+  .stage-card.done { border-color: var(--success-border); background: var(--success-bg); }
+
+  .stage-left { display: flex; align-items: center; gap: 12px; }
+  .stage-num {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--card); display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; color: var(--text-secondary); flex-shrink: 0;
+  }
+  .stage-card.done .stage-num { background: var(--success-border); color: #fff; }
+  .stage-title { font-size: 15px; font-weight: 500; }
+  .stage-meta { font-size: 12px; color: var(--text-secondary); }
+  .stage-status { font-size: 12px; color: var(--text-secondary); flex-shrink: 0; }
+
+  /* ===== Game screen ===== */
+  .game-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px; font-size: 13px; color: var(--text-secondary);
+  }
+
+  .progress-bar { height: 5px; background: var(--card-border); border-radius: 3px; overflow: hidden; margin-bottom: 18px; }
+  .progress-fill { height: 100%; background: var(--accent); transition: width 0.2s; }
+
+  .round-instructions {
+    font-size: 14px; color: var(--text-secondary); margin: 0 0 16px;
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 8px; padding: 10px 14px;
+  }
+
+  .match-columns { display: flex; gap: 10px; margin-bottom: 16px; }
+  .match-col { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+  .col-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 2px; }
+
+  .match-item {
+    background: var(--card); border: 1.5px solid var(--card-border);
+    border-radius: 9px; padding: 12px 12px; font-size: 14px; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    user-select: none; line-height: 1.4;
+  }
+  .match-item:hover:not(.matched):not(.disabled) { border-color: var(--accent); }
+  .match-item.selected { border-color: var(--accent); background: var(--chip-active); }
+  .match-item.matched {
+    background: var(--success-bg); border-color: var(--success-border);
+    color: var(--success-text); cursor: default; opacity: 0.85;
+  }
+  .match-item.wrong-flash {
+    background: var(--danger-bg); border-color: var(--danger-border); color: var(--danger-text);
+  }
+  .match-item.disabled { cursor: default; }
+
+  .term-item { font-weight: 600; font-size: 15px; }
+
+  .info-card {
+    margin-top: 4px; padding: 12px 14px; background: var(--card);
+    border: 1px solid var(--card-border); border-radius: 9px;
+    font-size: 13px; color: var(--text-secondary); display: none;
+  }
+  .info-card.shown { display: block; }
+  .info-card .info-title { font-weight: 600; color: var(--text); display: block; margin-bottom: 4px; font-size: 13px; }
+
+  .action-row { display: flex; gap: 10px; margin-top: 14px; }
+
+  button.secondary {
+    flex: 1; background: transparent; border: 1.5px solid var(--card-border); color: var(--text);
+    border-radius: 10px; padding: 12px; font-size: 14px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: border-color 0.15s;
+  }
+  button.secondary:hover { border-color: var(--accent); }
+  button.secondary:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  button.primary {
+    width: 100%; background: var(--accent); color: #fff; border: none;
+    border-radius: 10px; padding: 14px; font-size: 15px; font-weight: 600; cursor: pointer;
+  }
+  button.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .mistakes-badge {
+    display: inline-block; font-size: 12px; background: var(--pending-bg);
+    border: 1px solid var(--pending-border); color: #f0c474;
+    border-radius: 20px; padding: 2px 10px;
+  }
+
+  /* ===== Stage results ===== */
+  .result-hero { text-align: center; padding: 24px 16px; }
+  .result-score { font-size: 42px; font-weight: 700; margin: 6px 0 4px; }
+  .result-pct { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
+
+  .hidden { display: none !important; }
+
+  footer { text-align: center; font-size: 12px; color: var(--text-secondary); margin-top: 26px; padding-bottom: 20px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- STAGE SELECTION SCREEN -->
+  <div id="screen-stages">
+    <h1>Algoritma Eşleştirme</h1>
+    <p class="subtitle">Sırayla ilerle: her aşamada özellikleri doğru algoritma/kavramla eşleştir.</p>
+    <div class="stage-grid" id="stage-grid"></div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="screen-game" class="hidden">
+    <div class="game-header">
+      <span id="g-counter">Eşleştirme 1 / 1</span>
+      <span class="mistakes-badge" id="g-mistakes">Hata: 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="g-progress"></div></div>
+    <p class="round-instructions" id="g-instructions"></p>
+
+    <div class="match-columns">
+      <div class="match-col">
+        <div class="col-label">Kavram</div>
+        <div id="terms-col"></div>
+      </div>
+      <div class="match-col">
+        <div class="col-label">Özellik</div>
+        <div id="defs-col"></div>
+      </div>
+    </div>
+
+    <div class="info-card" id="g-info"></div>
+
+    <div class="action-row">
+      <button class="secondary" id="g-back-btn">← Aşamalara dön</button>
+    </div>
+  </div>
+
+  <!-- STAGE RESULT SCREEN -->
+  <div id="screen-result" class="hidden">
+    <div class="result-hero">
+      <p class="subtitle" style="margin:0;">Aşama tamamlandı</p>
+      <div class="result-score" id="r-score">0 hata</div>
+      <div class="result-pct" id="r-pct"></div>
+    </div>
+    <div class="action-row">
+      <button class="secondary" id="r-retry-btn">Bu aşamayı tekrarla</button>
+      <button class="primary" id="r-next-btn">Sonraki aşama →</button>
+    </div>
+  </div>
+
+  <footer>Algoritma Analizi Eşleştirme Oyunu &middot; Arkadaşlarınla paylaşabilirsin</footer>
+</div>
+
+<script>
+// ============ AŞAMA VERİTABANI ============
+// Her aşama: title, instructions, pairs: [{term, def, note}]
+const STAGES = [
+  {
+    title: "En Kısa Yol Algoritmaları",
+    meta: "Dijkstra · Floyd-Warshall · Bellman-Ford",
+    instructions: "Her algoritmayı, ona ait olan TEK özellikle eşleştir.",
+    pairs: [
+      {
+        term: "Dijkstra",
+        def: "Tek kaynaktan başlar, greedy çalışır, negatif kenarla çalışmaz, negatif döngü kontrolü YOKTUR. Zaman: Θ(E log V), Bellek: Θ(V)",
+        note: "Dijkstra bir düğümü 'visited' yaptıktan sonra bir daha güncellemez. Bu yüzden negatif kenar varsa hatalı sonuç verebilir, hatta hatayı fark etmez. Binary Heap ile Θ(E log V), Fibonacci Heap ile Θ(E + V log V)."
+      },
+      {
+        term: "Bellman-Ford",
+        def: "Tek kaynaktan başlar, V-1 kez TÜM kenarları tarar, negatif kenarla çalışır ve negatif döngü kontrolü VARDIR. Zaman: Θ(V·E), Bellek: Θ(V)",
+        note: "V-1 normal turdan sonra 1 ekstra tur yapılır; hala güncelleme oluyorsa negatif döngü tespit edilmiş olur. Dijkstra'dan daha yavaştır (V·E > E log V)."
+      },
+      {
+        term: "Floyd-Warshall",
+        def: "TÜM düğüm çiftleri arasındaki en kısa yolu aynı anda bulur, k'yı ara nokta olarak dener. Zaman: O(V³), Bellek: O(V²)",
+        note: "3 iç içe döngü (i,j,k) kullanır, k en dışta olmalıdır. Her döngü V kez çalıştığı için O(V³). Köşegen negatif çıkarsa negatif döngü var demektir."
+      }
+    ]
+  },
+  {
+    title: "Minimum Spanning Tree Algoritmaları",
+    meta: "Kruskal · Prim · Boruvka",
+    instructions: "Her MST algoritmasını, ona ait TEK özellikle eşleştir.",
+    pairs: [
+      {
+        term: "Kruskal",
+        def: "Kenar bazlı çalışır, kenarları ağırlığa göre sıralar, döngü kontrolü için Union-Find kullanır. Seyrek graflarda avantajlı.",
+        note: "Karmaşıklık Θ(E log V) - sıralama maliyeti domine eder, Union-Find amortized O(1) gibi (alpha(V) ile) davranır."
+      },
+      {
+        term: "Prim",
+        def: "Düğüm bazlı çalışır, bir düğümden başlayıp en yakın komşuyu ekler, Min-Heap kullanır. Yoğun graflarda avantajlı.",
+        note: "Karmaşıklık Θ(E log V), Kruskal ile aynı sınıfta ama yoğun graflarda pratikte daha hızlı çalışabilir."
+      },
+      {
+        term: "Boruvka",
+        def: "Tüm bileşenler AYNI ANDA (paralel) büyür, her bileşen kendi en ucuz çıkış kenarını bulur.",
+        note: "Paralel/dağıtık sistemlerde büyük avantaj sağlar. log V round gerekir, her round'da O(E) iş yapılır, toplamda O(E log V)."
+      }
+    ]
+  },
+  {
+    title: "Hashing - Probing Yöntemleri",
+    meta: "Linear · Quadratic · Double Hashing",
+    instructions: "Her probing (yoklama) yöntemini formülü/özelliğiyle eşleştir.",
+    pairs: [
+      {
+        term: "Linear Probing",
+        def: "p(k,i) = (h(k) + i*c) mod M formülünü kullanır, adımlar doğrusal artar (1,2,3...). Kümelenme (clustering) problemi en fazladır.",
+        note: "Başarılı arama/silme: 1/2*(1+1/(1-alpha)). Başarısız arama/ekleme: 1/2*(1+1/(1-alpha)^2)."
+      },
+      {
+        term: "Quadratic Probing",
+        def: "p(k,i) = h(k) + (i^2+i/2) mod M formülünü kullanır, adımlar kareler şeklinde artar. Linear'a göre kümelenmeyi azaltır.",
+        note: "Birincil kümelenme (primary clustering) sorununu azaltır ama ikincil kümelenme (secondary clustering) hala olabilir."
+      },
+      {
+        term: "Double Hashing",
+        def: "p(k,i) = (h1(k) + i*h2(k)) mod M formülünü kullanır, iki farklı hash fonksiyonu gerektirir. En az kümelenme problemi yaşar.",
+        note: "h2(k) ile M arasında ortak bölen olmaması (coprime olması) gerekir, aksi halde tüm tablo taranamaz."
+      }
+    ]
+  },
+  {
+    title: "Master Teoremi",
+    meta: "T(n) = aT(n/b) + f(n)",
+    instructions: "Her durumu (case) doğru sonuç formülüyle eşleştir.",
+    pairs: [
+      {
+        term: "Durum 1 (Case 1)",
+        def: "f(n) < n^(log_b a) ise → T(n) = Θ(n^(log_b a))",
+        note: "Bölme/birleştirme maliyeti (f(n)) küçükse, sonuç sadece alt problemlerin sayısına bağlı çıkar."
+      },
+      {
+        term: "Durum 2 (Case 2)",
+        def: "f(n) = n^(log_b a) ise → T(n) = Θ(n^(log_b a) · log n)",
+        note: "Merge Sort (T(n)=2T(n/2)+n) ve Binary Search (T(n)=T(n/2)+1) bu duruma örnektir."
+      },
+      {
+        term: "Durum 3 (Case 3)",
+        def: "f(n) > n^(log_b a) ise → T(n) = Θ(f(n))",
+        note: "Bölme/birleştirme maliyeti büyükse, sonuç doğrudan f(n)'e eşit çıkar (regularity condition sağlanmalı)."
+      }
+    ]
+  },
+  {
+    title: "Ağaç Yapıları",
+    meta: "BST · B-Tree · B+ Tree · B* Tree",
+    instructions: "Her ağaç yapısını kendine özgü TEK özellikle eşleştir.",
+    pairs: [
+      {
+        term: "BST (Binary Search Tree)",
+        def: "Her düğümde TEK anahtar, sol<kök<sağ kuralı. En kötü durum O(n) (zincir ağaç), ortalama O(log n).",
+        note: "Dengesiz büyüyebilir, bu yüzden AVL/Red-Black gibi kendi kendini dengeleyen versiyonları geliştirilmiştir."
+      },
+      {
+        term: "B-Tree",
+        def: "Her düğümde BİRDEN FAZLA anahtar (t-1 ile 2t-1 arası), veriler hem iç hem yaprak düğümlerde. Her zaman dengeli, O(log n) garantili.",
+        note: "Veritabanı indeksleme ve dosya sistemlerinde kullanılır. Düğüm dolunca (2t-1) bölünür, ortanca eleman yukarı çıkar."
+      },
+      {
+        term: "B+ Tree",
+        def: "Veriler SADECE yaprak düğümlerde tutulur, iç düğümler sadece yönlendirme yapar. Yapraklar birbirine bağlı (linked).",
+        note: "Sıralı erişim çok hızlıdır çünkü yapraklar bağlı liste oluşturur. B-Tree'nin disk tabanlı sistemler için optimize edilmiş halidir."
+      },
+      {
+        term: "B* Tree",
+        def: "Düğümler en az 2/3 dolu olmalıdır (B-Tree'de bu oran 1/2'dir). Daha yüksek doluluk oranı sağlar.",
+        note: "Bölünme (split) işlemi daha az sıklıkla gerçekleşir, çünkü düğümler daha dolu tutulur, bu da performansı artırabilir."
+      }
+    ]
+  },
+  {
+    title: "Hesaplama Karmaşıklığı Sınıfları",
+    meta: "P · NP · NP-Complete · NP-Hard",
+    instructions: "Her sınıfı tanımıyla eşleştir.",
+    pairs: [
+      {
+        term: "P",
+        def: "Polinom zamanda KESİN ÇÖZÜLEBİLEN problemler. Örnek: sıralama, kısa yol bulma (Dijkstra), MST.",
+        note: "'Pratikte çözülebilir, makul sürede sonuç alınır' anlamına gelir. n büyüse de işlem süresi kontrol edilebilir kalır."
+      },
+      {
+        term: "NP",
+        def: "Çözümü VERİLDİĞİNDE, doğruluğu polinom zamanda KONTROL edilebilen problemler. Örnek: SAT, TSP, Knapsack.",
+        note: "Çözmek zor olabilir ama bir çözüm önerisi verildiğinde, bunun doğru olup olmadığını hızlıca kontrol edebilirsin. P ⊆ NP'dir."
+      },
+      {
+        term: "NP-Complete",
+        def: "Hem NP'de OLAN hem de NP'deki HER problemin kendisine indirgenebildiği problemler. Örnek: 3-SAT, Vertex Cover.",
+        note: "Cook-Levin Teoremi (1971) ile 3-SAT'ın NP-Complete olduğu kanıtlanan ilk problemdir. NP'nin 'en zor' problemleridir."
+      },
+      {
+        term: "NP-Hard",
+        def: "NP'deki HER problemin kendisine indirgenebildiği, fakat KENDİSİ NP'de OLMAK ZORUNDA OLMAYAN problemler.",
+        note: "Çözümü polinom zamanda doğrulanamayabilir bile. NP-Complete = NP-Hard ∩ NP (kesişim kümesi)."
+      }
+    ]
+  }
+];
+
+// ============ STATE ============
+let stageProgress = STAGES.map(() => ({ done: false, mistakes: 0 }));
+let currentStageIdx = null;
+let pairs = [];          // shuffled pairs for current stage
+let leftOrder = [];       // shuffled term indices
+let rightOrder = [];      // shuffled def indices
+let matchedTerms = new Set();
+let selectedTermIdx = null;  // index into leftOrder (position)
+let selectedDefIdx = null;   // index into rightOrder (position)
+let mistakeCount = 0;
+let lockInput = false;
+
+// ============ STAGE SELECTION SCREEN ============
+function renderStages() {
+  const grid = document.getElementById('stage-grid');
+  grid.innerHTML = '';
+
+  STAGES.forEach((stage, i) => {
+    const unlocked = i === 0 || stageProgress[i - 1].done;
+    const done = stageProgress[i].done;
+
+    const card = document.createElement('div');
+    card.className = 'stage-card' + (unlocked ? '' : ' locked') + (done ? ' done' : '');
+    card.innerHTML = `
+      <div class="stage-left">
+        <div class="stage-num">${done ? '✓' : (i + 1)}</div>
+        <div>
+          <div class="stage-title">${stage.title}</div>
+          <div class="stage-meta">${stage.meta}</div>
+        </div>
+      </div>
+      <div class="stage-status">${done ? stageProgress[i].mistakes + ' hata' : (unlocked ? 'Başla' : 'Kilitli')}</div>
+    `;
+    if (unlocked) {
+      card.addEventListener('click', () => openStage(i));
+    }
+    grid.appendChild(card);
+  });
+}
+
+// ============ GAME LOGIC ============
+function openStage(idx) {
+  currentStageIdx = idx;
+  startStage();
+}
+
+function startStage() {
+  const stage = STAGES[currentStageIdx];
+  pairs = stage.pairs;
+  matchedTerms = new Set();
+  selectedTermIdx = null;
+  selectedDefIdx = null;
+  mistakeCount = 0;
+  lockInput = false;
+
+  leftOrder = pairs.map((_, i) => i);
+  rightOrder = pairs.map((_, i) => i);
+  shuffleArray(leftOrder);
+  shuffleArray(rightOrder);
+
+  document.getElementById('screen-stages').classList.add('hidden');
+  document.getElementById('screen-result').classList.add('hidden');
+  document.getElementById('screen-game').classList.remove('hidden');
+
+  document.getElementById('g-instructions').textContent = stage.instructions;
+
+  renderGame();
+}
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+function renderGame() {
+  const stage = STAGES[currentStageIdx];
+
+  document.getElementById('g-counter').textContent =
+    `Eşleştirme ${matchedTerms.size} / ${pairs.length} — ${stage.title}`;
+  document.getElementById('g-mistakes').textContent = `Hata: ${mistakeCount}`;
+  document.getElementById('g-progress').style.width = (matchedTerms.size / pairs.length * 100) + '%';
+
+  const termsCol = document.getElementById('terms-col');
+  const defsCol = document.getElementById('defs-col');
+  termsCol.innerHTML = '';
+  defsCol.innerHTML = '';
+
+  leftOrder.forEach((pairIdx, posIdx) => {
+    const item = document.createElement('div');
+    const isMatched = matchedTerms.has(pairIdx);
+    item.className = 'match-item term-item' + (isMatched ? ' matched disabled' : '') +
+      (selectedTermIdx === posIdx && !isMatched ? ' selected' : '');
+    item.textContent = pairs[pairIdx].term;
+    if (!isMatched) {
+      item.addEventListener('click', () => selectTerm(posIdx));
+    }
+    termsCol.appendChild(item);
+  });
+
+  rightOrder.forEach((pairIdx, posIdx) => {
+    const item = document.createElement('div');
+    const isMatched = matchedTerms.has(pairIdx);
+    item.className = 'match-item' + (isMatched ? ' matched disabled' : '') +
+      (selectedDefIdx === posIdx && !isMatched ? ' selected' : '');
+    item.textContent = pairs[pairIdx].def;
+    if (!isMatched) {
+      item.addEventListener('click', () => selectDef(posIdx));
+    }
+    defsCol.appendChild(item);
+  });
+
+  const infoBox = document.getElementById('g-info');
+  infoBox.classList.remove('shown');
+  infoBox.innerHTML = '';
+
+  if (matchedTerms.size === pairs.length) {
+    setTimeout(() => finishStage(), 600);
+  }
+}
+
+function selectTerm(posIdx) {
+  if (lockInput) return;
+  selectedTermIdx = posIdx;
+  renderGame();
+  tryMatch();
+}
+
+function selectDef(posIdx) {
+  if (lockInput) return;
+  selectedDefIdx = posIdx;
+  renderGame();
+  tryMatch();
+}
+
+function tryMatch() {
+  if (selectedTermIdx === null || selectedDefIdx === null) return;
+
+  const termPairIdx = leftOrder[selectedTermIdx];
+  const defPairIdx = rightOrder[selectedDefIdx];
+
+  lockInput = true;
+
+  const termEl = document.querySelectorAll('#terms-col .match-item')[selectedTermIdx];
+  const defEl = document.querySelectorAll('#defs-col .match-item')[selectedDefIdx];
+
+  if (termPairIdx === defPairIdx) {
+    // CORRECT MATCH
+    setTimeout(() => {
+      matchedTerms.add(termPairIdx);
+      selectedTermIdx = null;
+      selectedDefIdx = null;
+      lockInput = false;
+
+      const infoBox = document.getElementById('g-info');
+      infoBox.className = 'info-card shown';
+      infoBox.innerHTML = `<span class="info-title">✓ ${pairs[termPairIdx].term}</span>${pairs[termPairIdx].note}`;
+
+      renderGame();
+      document.getElementById('g-info').className = 'info-card shown';
+      document.getElementById('g-info').innerHTML = `<span class="info-title">✓ ${pairs[termPairIdx].term}</span>${pairs[termPairIdx].note}`;
+    }, 250);
+  } else {
+    // WRONG MATCH
+    termEl.classList.add('wrong-flash');
+    defEl.classList.add('wrong-flash');
+    mistakeCount++;
+    document.getElementById('g-mistakes').textContent = `Hata: ${mistakeCount}`;
+
+    setTimeout(() => {
+      selectedTermIdx = null;
+      selectedDefIdx = null;
+      lockInput = false;
+      renderGame();
+    }, 700);
+  }
+}
+
+function finishStage() {
+  stageProgress[currentStageIdx].done = true;
+  stageProgress[currentStageIdx].mistakes = mistakeCount;
+
+  document.getElementById('screen-game').classList.add('hidden');
+  document.getElementById('screen-result').classList.remove('hidden');
+
+  document.getElementById('r-score').textContent = mistakeCount === 0 ? 'Hatasız! 🎯' : (mistakeCount + ' hata');
+  document.getElementById('r-pct').textContent = STAGES[currentStageIdx].title + ' tamamlandı';
+
+  const hasNext = currentStageIdx < STAGES.length - 1;
+  const nextBtn = document.getElementById('r-next-btn');
+  nextBtn.textContent = hasNext ? 'Sonraki aşama →' : 'Tüm aşamalar bitti ✓';
+  nextBtn.disabled = !hasNext;
+}
+
+document.getElementById('g-back-btn').addEventListener('click', () => {
+  document.getElementById('screen-game').classList.add('hidden');
+  document.getElementById('screen-stages').classList.remove('hidden');
+  renderStages();
+});
+
+document.getElementById('r-retry-btn').addEventListener('click', startStage);
+
+document.getElementById('r-next-btn').addEventListener('click', () => {
+  if (currentStageIdx < STAGES.length - 1) {
+    currentStageIdx++;
+    startStage();
+  }
+});
+
+// ============ INIT ============
+renderStages();
+</script>
+</body>
+</html>

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algoritma Analizi - Boşluk Doldurma</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --card: #1a1d24;
+    --card-border: #2a2e38;
+    --text: #e8e9ed;
+    --text-secondary: #9aa0ab;
+    --accent: #5b8cff;
+    --chip-bg: #20242c;
+    --chip-active: #2c3450;
+    --info-bg: #16203a;
+    --info-border: #3a5cc4;
+    --info-text: #9db8ff;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 16px;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin: 0 0 24px;
+  }
+
+  .topic-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .topic-chip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--chip-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+
+  .topic-chip:hover { border-color: var(--accent); }
+
+  .topic-chip.active {
+    background: var(--chip-active);
+    border-color: var(--accent);
+  }
+
+  .topic-chip .topic-name { font-size: 15px; font-weight: 500; }
+
+  .topic-chip .topic-count {
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: var(--card);
+    border-radius: 20px;
+    padding: 2px 10px;
+    flex-shrink: 0;
+    margin-left: 12px;
+  }
+
+  .topic-chip.active .topic-count { color: var(--accent); }
+
+  .check-icon {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--text-secondary);
+    border-radius: 4px;
+    margin-right: 12px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .topic-chip.active .check-icon {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .check-icon svg { width: 12px; height: 12px; display: none; }
+  .topic-chip.active .check-icon svg { display: block; }
+
+  .topic-left { display: flex; align-items: center; flex: 1; }
+
+  .start-bar {
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(to top, var(--bg) 70%, transparent);
+    padding: 16px 0 8px;
+    margin-top: 8px;
+  }
+
+  button.primary {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  button.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.primary:active:not(:disabled) { opacity: 0.85; }
+
+  .total-info {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+  }
+
+  /* Quiz screen */
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .progress-bar {
+    height: 5px;
+    background: var(--card-border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.2s;
+  }
+
+  .question-topic-tag {
+    display: inline-block;
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(91,140,255,0.12);
+    border-radius: 6px;
+    padding: 3px 8px;
+    margin-bottom: 14px;
+  }
+
+  .sentence-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 18px 16px;
+    margin-bottom: 18px;
+  }
+
+  .sentence-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .sentence-text {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.7;
+    flex: 1;
+    margin: 0;
+  }
+
+  .blank-mark {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .reveal-btn {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1.5px solid var(--card-border);
+    background: var(--chip-bg);
+    color: var(--text);
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+
+  .reveal-btn:hover { border-color: var(--accent); }
+
+  .reveal-btn.active {
+    background: var(--info-border);
+    border-color: var(--info-border);
+    color: #fff;
+  }
+
+  .answer-box {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--info-bg);
+    border: 1px solid var(--info-border);
+    border-radius: 8px;
+    font-size: 15px;
+    display: none;
+  }
+
+  .answer-box.shown { display: block; }
+
+  .answer-box .answer-label {
+    font-size: 12px;
+    color: var(--info-text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .answer-box .answer-value {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .nav-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  button.secondary {
+    flex: 1;
+    background: transparent;
+    border: 1.5px solid var(--card-border);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 13px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  button.secondary:hover { border-color: var(--accent); }
+  button.secondary:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  button.next-main {
+    flex: 1;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Results screen */
+  .result-hero {
+    text-align: center;
+    padding: 32px 16px;
+  }
+
+  .result-score {
+    font-size: 48px;
+    font-weight: 700;
+    margin: 8px 0 4px;
+  }
+
+  .result-pct {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+  }
+
+  .topic-breakdown {
+    text-align: left;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+  }
+
+  .topic-breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 14px;
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .topic-breakdown-row:last-child { border-bottom: none; }
+
+  .hidden { display: none !important; }
+
+  footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 28px;
+    padding-bottom: 20px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- TOPIC SELECTION SCREEN -->
+  <div id="screen-select">
+    <h1>Algoritma Analizi - Boşluk Doldurma</h1>
+    <p class="subtitle">Çalışmak istediğin konu başlıklarını seç, birden fazla seçebilirsin.</p>
+
+    <div class="topic-grid" id="topic-grid"></div>
+
+    <div class="start-bar">
+      <p class="total-info" id="total-info">0 cümle seçildi</p>
+      <button class="primary" id="start-btn" disabled>Başla</button>
+    </div>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="screen-quiz" class="hidden">
+    <div class="quiz-header">
+      <span id="q-counter">Cümle 1 / 1</span>
+      <span id="q-revealed-count">Görüntülenen: 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+
+    <div id="q-topic-tag" class="question-topic-tag"></div>
+
+    <div class="sentence-card">
+      <div class="sentence-row">
+        <p class="sentence-text" id="sentence-text"></p>
+        <button class="reveal-btn" id="reveal-btn" aria-label="Cevabı göster">!</button>
+      </div>
+      <div class="answer-box" id="answer-box">
+        <span class="answer-label">Cevap</span>
+        <span class="answer-value" id="answer-value"></span>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="secondary" id="prev-btn">← Önceki</button>
+      <button class="next-main" id="next-btn">Sonraki →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="screen-results" class="hidden">
+    <div class="result-hero">
+      <p class="subtitle" style="margin:0;">Tamamlandı</p>
+      <div class="result-score" id="result-score">0 / 0</div>
+      <div class="result-pct" id="result-pct">cümle görüntülendi</div>
+    </div>
+    <div class="topic-breakdown" id="topic-breakdown"></div>
+    <div class="nav-row">
+      <button class="secondary" id="restart-same">Aynı konularla tekrar</button>
+      <button class="secondary" id="restart-new">Konu seçimine dön</button>
+    </div>
+  </div>
+
+  <footer>Algoritma Analizi Boşluk Doldurma &middot; Arkadaşlarınla paylaşabilirsin</footer>
+</div>
+
+<script>
+// ============ CÜMLE VERİTABANI ============
+const SENTENCE_BANK = {
+  "BST": [
+    { text: "Binary Search Tree'de bir düğümün sol alt ağacındaki tüm değerler kökten ____, sağ alt ağacındaki tüm değerler ise kökten ____ olmalıdır.", answer: "küçük / büyük" },
+    { text: "BST'de en kötü durum recurrence'ı T(n) = T(n-1) + c olup sonucu O(____) dir.", answer: "n" },
+    { text: "BST'de ortalama durum recurrence'ı T(n) = T(n/2) + c olup sonucu O(____) dir.", answer: "log n" },
+    { text: "Ağaç tamamen dengesiz (zincir şeklinde) büyürse BST'nin arama karmaşıklığı O(____) olur.", answer: "n" },
+    { text: "Iterative Insertion'da genel denklem T(n) = T(k) + T(n-k-1) + ____ şeklindedir.", answer: "c" },
+    { text: "n eleman eklerken en kötü durumda (k=0) Iterative Insertion karmaşıklığı O(____) çıkar.", answer: "n^2" },
+    { text: "n eleman eklerken en iyi durumda (k=n/2, dengeli ağaç) Iterative Insertion karmaşıklığı O(____) çıkar.", answer: "n log n" },
+    { text: "BST'de inorder traversal (sol-kök-sağ), elemanları her zaman ____ sırada verir.", answer: "sıralı (artan)" }
+  ],
+  "Hashing": [
+    { text: "Hash tablolarda alpha = N/M oranına ____ denir.", answer: "load factor (doluluk oranı)" },
+    { text: "h(x) = x mod M formülünde M, tablodaki ____ sayısını temsil eder.", answer: "slot" },
+    { text: "Open Hashing (Separate Chaining) yönteminde çakışan elemanlar aynı slotun ____ yapısına eklenir.", answer: "linked list (zincir)" },
+    { text: "Linear Probing'de p(k,i) = (h(k) + i*c) mod M formülünde c, ____ olarak adlandırılır.", answer: "atlama sabiti" },
+    { text: "Open Addressing yöntemlerinde silme işlemi için fiziksel null yerine ____ flag kullanılır.", answer: "deleted (boolean)" },
+    { text: "Separate Chaining'de başarısız arama beklenen karşılaştırma sayısı doğrudan ____ değerine eşittir.", answer: "alpha" },
+    { text: "Linear Probing'de 'ekleme' işleminin maliyeti, ____ arama maliyeti ile aynıdır.", answer: "başarısız" },
+    { text: "Linear Probing'de 'silme' işleminin maliyeti, ____ arama maliyeti ile aynıdır.", answer: "başarılı" },
+    { text: "alpha < 0.75 tutulduğunda hash tablosundaki tüm işlemler pratikte O(____) gibi davranır.", answer: "1" }
+  ],
+  "B-Tree": [
+    { text: "B-Tree'de bir düğüm en az t-1, en fazla ____ anahtar tutabilir.", answer: "2t-1" },
+    { text: "B-Tree'nin minimum derecesi t için minimum koşul t ____ 2'dir.", answer: ">= (büyük eşit)" },
+    { text: "Bir B-Tree düğümü dolup (2t-1 anahtar) yeni eleman eklenince düğüm ____ ve ortadaki eleman yukarı çıkar.", answer: "bölünür (split)" },
+    { text: "B-Tree'de arama, ekleme ve silme işlemleri O(____) karmaşıklığında garanti edilir.", answer: "log n" },
+    { text: "B-Tree'nin BST'den temel farkı, her zaman ____ kalmasıdır.", answer: "dengeli" },
+    { text: "B-Tree'ler genellikle ____ ve dosya sistemlerinde kullanılır.", answer: "veritabanı indeksleme" }
+  ],
+  "Graf Türleri": [
+    { text: "Kenarların belirli bir yönü olan graflara ____ graf denir.", answer: "yönlü (directed)" },
+    { text: "Bir düğümün kendine bağlı kenarına ____ denir.", answer: "self-loop" },
+    { text: "Self-loop içeren graflar ____ graf olarak adlandırılır.", answer: "sözde (pseudo)" },
+    { text: "Her düğüm çifti arasında kenar bulunan graf türüne ____ graf denir.", answer: "tam (complete)" },
+    { text: "Bir Euler Circuit'in var olabilmesi için tüm düğümlerin derecesi ____ olmalıdır.", answer: "çift" },
+    { text: "Bir Euler Path'in var olabilmesi için tam olarak ____ düğümün derecesi tek olmalıdır.", answer: "2" },
+    { text: "Hamilton döngüsü, her düğümü tam ____ kez ziyaret eden kapalı bir yoldur.", answer: "1" },
+    { text: "Kenarları birbirini kesmeden çizilebilen graflara ____ graf denir.", answer: "düzlemsel (planar)" }
+  ],
+  "DFS/BFS": [
+    { text: "DFS (Depth-First Search), gezinti için ____ veri yapısını kullanır.", answer: "Stack" },
+    { text: "BFS (Breadth-First Search), gezinti için ____ veri yapısını kullanır.", answer: "Queue" },
+    { text: "Graf gezintilerinde 'visited' kontrolü olmazsa, graf döngü içerdiğinde algoritma ____ girebilir.", answer: "sonsuz döngüye" },
+    { text: "DFS ve BFS'in zaman karmaşıklığı, adjacency list ile O(____) dir.", answer: "V+E" },
+    { text: "BFS algoritması grafta ____ yolu garanti şekilde bulur.", answer: "en kısa (kenar sayısı bakımından)" },
+    { text: "DFS, bulunduğu düğümden mümkün olduğunca ____ gitmeye çalışır.", answer: "derine" }
+  ],
+  "Dijkstra": [
+    { text: "Dijkstra algoritması ____ ağırlıklı kenarlarla çalışmaz.", answer: "negatif" },
+    { text: "Dijkstra'da bir düğüm 'visited=true' olarak işaretlendikten sonra bir daha ____ edilmez.", answer: "güncellenmez/işlenmez" },
+    { text: "Dijkstra'da Binary Heap kullanılırsa zaman karmaşıklığı Theta(____) olur.", answer: "E log V (|E| log|V|)" },
+    { text: "Dijkstra'da Fibonacci Heap kullanılırsa zaman karmaşıklığı Theta(____) olur.", answer: "E + V log V" },
+    { text: "Dijkstra algoritması her adımda ziyaret edilmemiş düğümler arasında mesafesi en ____ olanı seçer.", answer: "küçük" },
+    { text: "Dijkstra'nın bellek karmaşıklığı Theta(____) dir.", answer: "V (|V|)" }
+  ],
+  "Bellman-Ford": [
+    { text: "Bellman-Ford algoritması tüm kenarları ____ kez tarar (V = düğüm sayısı).", answer: "V-1 (|V|-1)" },
+    { text: "Bellman-Ford'un zaman karmaşıklığı Theta(____) dir.", answer: "V x E (|V|.|E|)" },
+    { text: "V-1 turdan sonra hala güncelleme oluyorsa, grafta ____ olduğu anlaşılır.", answer: "negatif döngü" },
+    { text: "Bellman-Ford, Dijkstra'dan farklı olarak ____ ağırlıklı kenarlarla çalışabilir.", answer: "negatif" },
+    { text: "dist[u] dizisi, kaynak düğümden u'ya olan o ana kadar bilinen ____ mesafeyi tutar.", answer: "en kısa (en iyi bilinen)" },
+    { text: "Bellman-Ford'da dist[u] + w < dist[v] koşulu sağlanırsa dist[v] değeri ____ ile güncellenir.", answer: "dist[u] + w" }
+  ],
+  "Floyd-Warshall": [
+    { text: "Floyd-Warshall algoritmasında en dış döngü ____ değişkeni (ara nokta) olmalıdır.", answer: "k" },
+    { text: "Floyd-Warshall'ın zaman karmaşıklığı O(____) dür.", answer: "V^3 (|V|^3)" },
+    { text: "Floyd-Warshall'ın bellek karmaşıklığı O(____) dür.", answer: "V^2 (|V|^2)" },
+    { text: "Floyd-Warshall'da köşegen elemanı dist[i][i] negatif çıkarsa grafta ____ olduğu anlaşılır.", answer: "negatif döngü" },
+    { text: "Floyd-Warshall, Dijkstra ve Bellman-Ford'dan farklı olarak TÜM düğüm ____ arasındaki en kısa yolu bulur.", answer: "çiftleri" },
+    { text: "Floyd-Warshall güncelleme formülü: dist[i][j] = min(dist[i][j], dist[i][k] + dist[____][j]) şeklindedir.", answer: "k" }
+  ],
+  "MST (Kruskal/Prim/Boruvka)": [
+    { text: "Kruskal algoritması kenarları ağırlığa göre ____ ve döngü kontrolü için Union-Find kullanır.", answer: "sıralar" },
+    { text: "Kruskal algoritmasının zaman karmaşıklığı Theta(____) dür.", answer: "E log V (|E| log|V|)" },
+    { text: "Union-Find'de alpha(|V|) ifadesi ____ fonksiyonunun tersini temsil eder.", answer: "Ackermann" },
+    { text: "Path compression ve union by rank optimizasyonları sayesinde Union-Find işlemleri pratikte O(____) gibi davranır.", answer: "1" },
+    { text: "Prim algoritması, en küçük ağırlıklı komşu kenarı bulmak için ____ veri yapısını kullanır.", answer: "Min-Heap" },
+    { text: "Boruvka algoritmasında tüm bileşenler ____ şekilde büyür.", answer: "paralel (aynı anda)" },
+    { text: "Bir Spanning Tree, grafın tüm düğümlerini içerir ve tam olarak ____ kenara sahiptir.", answer: "|V|-1" },
+    { text: "Kruskal algoritması seyrek graflarda, Prim ise ____ graflarda genelde daha avantajlıdır.", answer: "yoğun" }
+  ],
+  "P-NP-NP-Complete": [
+    { text: "3-SAT'ın NP-Complete olduğu ____ Teoremi ile (1971) kanıtlanmıştır.", answer: "Cook-Levin" },
+    { text: "Bir problemin çözümü verildiğinde doğruluğu polinom zamanda kontrol edilebiliyorsa bu problem ____ sınıfındadır.", answer: "NP" },
+    { text: "Bir problem hem NP'de hem de NP'deki her problem ona indirgenebiliyorsa bu problem ____ sınıfındadır.", answer: "NP-Complete" },
+    { text: "NP-Hard problemler NP'de olmak ____ değildir.", answer: "zorunda" },
+    { text: "A <=p B yazımı, A probleminin B'ye polinom zamanda ____ edilebildiğini gösterir.", answer: "indirgenebilir" },
+    { text: "TSP'nin karar problemi versiyonu 'tüm şehirleri X km'den kısa bir turla gezebilir miyim?' şeklinde, cevabı sadece ____ olur.", answer: "evet/hayır" },
+    { text: "Vertex Cover problemi, grafın tüm ____ kapsayan minimum düğüm kümesini bulmayı amaçlar.", answer: "kenarlarını" },
+    { text: "Graf renklendirmede K=2 problemi P sınıfındadır, ama K____ için problem NP-Complete olur.", answer: ">=3" },
+    { text: "P = NP sorusu, bir problemi ____ ile çözümünü doğrulamak arasında fark olup olmadığını sorar.", answer: "çözmek" }
+  ],
+  "Dinamik Programlama": [
+    { text: "DP'nin çalışabilmesi için problemde optimal alt yapı ve ____ alt problemler bulunmalıdır.", answer: "çakışan (overlapping)" },
+    { text: "Naive recursive Fibonacci algoritmasının karmaşıklığı O(____) dir.", answer: "2^n" },
+    { text: "Top-Down DP yaklaşımı recursive çağrı yapıp sonuçları ____ adı verilen teknikle saklar.", answer: "memoization" },
+    { text: "Bottom-Up DP yaklaşımı küçük alt problemlerden başlayıp döngüyle ilerler, buna ____ denir.", answer: "tabulation" },
+    { text: "Greedy algoritmalar her adımda anlık en iyi seçimi yapar, DP ise tüm alt problemleri ____ ve en iyisini seçer.", answer: "çözüp saklayarak" },
+    { text: "Knapsack probleminin DP çözümünde dp[i][w], i. eşyaya kadar w kapasiteyle elde edilebilecek ____ değeri tutar.", answer: "maksimum" }
+  ]
+};
+
+// ============ STATE ============
+let selectedTopics = new Set();
+let activeSentences = [];
+let currentIndex = 0;
+let revealedSet = new Set();
+let topicStats = {};
+
+// ============ TOPIC SELECTION SCREEN ============
+function renderTopicSelect() {
+  const grid = document.getElementById('topic-grid');
+  grid.innerHTML = '';
+
+  Object.keys(SENTENCE_BANK).forEach(topic => {
+    const count = SENTENCE_BANK[topic].length;
+    const chip = document.createElement('div');
+    chip.className = 'topic-chip' + (selectedTopics.has(topic) ? ' active' : '');
+    chip.innerHTML = `
+      <div class="topic-left">
+        <div class="check-icon">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 8L6.5 11.5L13 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="topic-name">${topic}</span>
+      </div>
+      <span class="topic-count">${count} cümle</span>
+    `;
+    chip.addEventListener('click', () => {
+      if (selectedTopics.has(topic)) {
+        selectedTopics.delete(topic);
+      } else {
+        selectedTopics.add(topic);
+      }
+      renderTopicSelect();
+    });
+    grid.appendChild(chip);
+  });
+
+  let total = 0;
+  selectedTopics.forEach(t => total += SENTENCE_BANK[t].length);
+
+  const totalInfo = document.getElementById('total-info');
+  const startBtn = document.getElementById('start-btn');
+
+  if (total === 0) {
+    totalInfo.textContent = 'Henüz konu seçilmedi';
+    startBtn.disabled = true;
+  } else {
+    totalInfo.textContent = `${selectedTopics.size} konu, toplam ${total} cümle seçildi`;
+    startBtn.disabled = false;
+  }
+}
+
+document.getElementById('start-btn').addEventListener('click', startSession);
+
+function startSession() {
+  activeSentences = [];
+  selectedTopics.forEach(topic => {
+    SENTENCE_BANK[topic].forEach(s => {
+      activeSentences.push({ ...s, topic });
+    });
+  });
+
+  // Shuffle
+  for (let i = activeSentences.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [activeSentences[i], activeSentences[j]] = [activeSentences[j], activeSentences[i]];
+  }
+
+  currentIndex = 0;
+  revealedSet = new Set();
+  topicStats = {};
+  selectedTopics.forEach(t => topicStats[t] = { total: 0, revealed: 0 });
+
+  document.getElementById('screen-select').classList.add('hidden');
+  document.getElementById('screen-results').classList.add('hidden');
+  document.getElementById('screen-quiz').classList.remove('hidden');
+
+  renderSentence();
+}
+
+// ============ QUIZ SCREEN ============
+function renderSentence() {
+  const item = activeSentences[currentIndex];
+
+  document.getElementById('q-counter').textContent = `Cümle ${currentIndex + 1} / ${activeSentences.length}`;
+  document.getElementById('q-revealed-count').textContent = `Görüntülenen: ${revealedSet.size}`;
+  document.getElementById('progress-fill').style.width = (currentIndex / activeSentences.length * 100) + '%';
+  document.getElementById('q-topic-tag').textContent = item.topic;
+
+  // Replace ____ with styled blank marker
+  const displayText = item.text.replace(/____/g, '<span class="blank-mark">‹ ? ›</span>');
+  document.getElementById('sentence-text').innerHTML = displayText;
+
+  document.getElementById('answer-value').textContent = item.answer;
+
+  const isRevealed = revealedSet.has(currentIndex);
+  const answerBox = document.getElementById('answer-box');
+  const revealBtn = document.getElementById('reveal-btn');
+
+  if (isRevealed) {
+    answerBox.classList.add('shown');
+    revealBtn.classList.add('active');
+  } else {
+    answerBox.classList.remove('shown');
+    revealBtn.classList.remove('active');
+  }
+
+  document.getElementById('prev-btn').disabled = currentIndex === 0;
+  document.getElementById('next-btn').textContent = (currentIndex < activeSentences.length - 1) ? 'Sonraki →' : 'Bitir';
+}
+
+document.getElementById('reveal-btn').addEventListener('click', () => {
+  if (revealedSet.has(currentIndex)) {
+    revealedSet.delete(currentIndex);
+  } else {
+    revealedSet.add(currentIndex);
+  }
+  renderSentence();
+});
+
+document.getElementById('prev-btn').addEventListener('click', () => {
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderSentence();
+  }
+});
+
+document.getElementById('next-btn').addEventListener('click', () => {
+  if (currentIndex < activeSentences.length - 1) {
+    currentIndex++;
+    renderSentence();
+  } else {
+    showResults();
+  }
+});
+
+// ============ RESULTS SCREEN ============
+function showResults() {
+  document.getElementById('screen-quiz').classList.add('hidden');
+  document.getElementById('screen-results').classList.remove('hidden');
+
+  // Compute topic breakdown
+  activeSentences.forEach((item, idx) => {
+    topicStats[item.topic].total++;
+    if (revealedSet.has(idx)) topicStats[item.topic].revealed++;
+  });
+
+  document.getElementById('result-score').textContent = `${revealedSet.size} / ${activeSentences.length}`;
+  document.getElementById('result-pct').textContent = 'cümle görüntülendi';
+
+  const breakdown = document.getElementById('topic-breakdown');
+  breakdown.innerHTML = '';
+  Object.keys(topicStats).forEach(topic => {
+    const ts = topicStats[topic];
+    if (ts.total === 0) return;
+    const row = document.createElement('div');
+    row.className = 'topic-breakdown-row';
+    row.innerHTML = `<span>${topic}</span><span>${ts.revealed} / ${ts.total} görüntülendi</span>`;
+    breakdown.appendChild(row);
+  });
+}
+
+document.getElementById('restart-same').addEventListener('click', startSession);
+
+document.getElementById('restart-new').addEventListener('click', () => {
+  document.getElementById('screen-results').classList.add('hidden');
+  document.getElementById('screen-select').classList.remove('hidden');
+  renderTopicSelect();
+});
+
+// ============ INIT ============
+renderTopicSelect();
+</script>
+</body>
+</html>
