@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project>
+  <executable name="soru_7.elf">
+    <memory name="data">
+      <units>bytes</units>
+      <length>2048</length>
+      <used>622</used>
+      <free>1426</free>
+    </memory>
+    <memory name="program">
+      <units>bytes</units>
+      <length>33024</length>
+      <used>14829</used>
+      <free>18195</free>
+    </memory>
+  </executable>
+</project>

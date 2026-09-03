@@ -1,0 +1,1 @@
+"C:\Program Files\MATLAB\R2023b\bin\win64\gmake" -f soru_17.mk  GENERATE_ASAP2=0 MCHP_AUTO_FLASH=0 MCHP_MULTITHREAD_COMPILATION=1 LinkWithMaster=0 OPTS="-DTID01EQ=0 -mdfp=C:/PROGRA~1/Microchip/MPLABX/v6.20/packs/Microchip/dsPIC33F-GP-MC_DFP/1.4.235/xc16" -j 21 -l 21
