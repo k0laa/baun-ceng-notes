@@ -103,7 +103,7 @@ Projeyi faydalı bulduysanız sağ üst köşeden **Star (⭐)** vererek destek 
 
 ## ❤️ Teşekkürler
 
-Bu depoya ders notları, düzeltmeler ve düzenlemeler ile katkıda bulunan tüm öğrencilerimize teşekkür ederiz:
+Bu depoya ders notları, düzeltmeler ve düzenlemeler ile katkıda bulunan tüm öğrencilere teşekkür ederiz:
 
 - **[Berfin Hazar](https://github.com/berfinhazar)**
 - **[Mehmet Koç](https://github.com/MehmetKoc16)**
