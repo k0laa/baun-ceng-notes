@@ -24,13 +24,13 @@ Balıkesir Üniversitesi Bilgisayar Mühendisliği öğrencileri tarafından haz
 
 Aşağıdaki tablodan ilgili sınıf ve döneme tıklayarak ders arşivlerine hızlıca ulaşabilirsiniz:
 
-| Sınıf | Dönemler | Mevcut Dersler & İçerik | Bağlantı |
-| :--- | :--- | :--- | :---: |
-| 🎓 **1. Sınıf** | 1. Dönem & 2. Dönem | Temel Mühendislik & Programlama Giriş Dersleri | [İncele](./1-Sinif/README.md) |
-| 🎓 **2. Sınıf** | 3. Dönem & 4. Dönem | Elektronik Devreler, NYP, Veri Yapıları, Görsel Prog., Nümerik Analiz, Sayısal Tasarım | [İncele](./2-Sinif/README.md) |
-| 🎓 **3. Sınıf** | 5. Dönem & 6. Dönem | Bilgisayar Ağları, Veritabanı, Algoritma Analizi, Mikroişlemciler, İleri Ağlar, İşletim Sistemleri | [İncele](./3-Sinif/README.md) |
-| 🎓 **4. Sınıf** | 7. Dönem & 8. Dönem | Bitirme Projeleri ve İleri Seçmeli Dersler | [İncele](./4-Sinif/README.md) |
-| 🛠️ **Ortak Kaynaklar** | Genel Rehberler | Git, Markdown, Programlama Rehberleri & Kariyer | *Yakında* |
+| Sınıf                   | Dönemler            | Mevcut Dersler & İçerik                                                                                                           | Bağlantı                      |
+|:----------------------- |:------------------- |:--------------------------------------------------------------------------------------------------------------------------------- |:-----------------------------:|
+| 🎓 **1. Sınıf**         | 1. Dönem & 2. Dönem | Temel Mühendislik & Programlama Giriş Dersleri                                                                                    | [İncele](./1-Sinif/README.md) |
+| 🎓 **2. Sınıf**         | 3. Dönem & 4. Dönem | Elektronik Devreler, NYP, Veri Yapıları, Görsel Prog., Nümerik Analiz, Sayısal Tasarım                                            | [İncele](./2-Sinif/README.md) |
+| 🎓 **3. Sınıf**         | 5. Dönem & 6. Dönem | Bilgisayar Ağları, Biçimsel Diller, Organizasyon, Veritabanı, Algoritma Analizi, Mikroişlemciler, İleri Ağlar, İşletim Sistemleri | [İncele](./3-Sinif/README.md) |
+| 🎓 **4. Sınıf**         | 7. Dönem & 8. Dönem | Bitirme Projeleri ve İleri Seçmeli Dersler                                                            | [İncele](./4-Sinif/README.md) |
+| 🛠️ **Ortak Kaynaklar** | Genel Rehberler     | Git, Markdown, Programlama Rehberleri & Kariyer                                                                                   | *Yakında*                     |
 
 ---
 
