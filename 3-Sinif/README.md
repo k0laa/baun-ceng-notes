@@ -12,10 +12,10 @@ Bu klasör, Balıkesir Üniversitesi Bilgisayar Mühendisliği **3. Sınıf** ö
 
 ## 📅 Dönemler
 
-| Dönem | Açıklama | Ders Sayısı | Bağlantı |
-| :--- | :--- | :---: | :---: |
-| 📅 **5. Dönem (Güz)** | Bilgisayar Ağları, Veritabanı Yönetim Sistemleri | 2 Ders | [Derslere Git](./5-Donem/README.md) |
-| 📅 **6. Dönem (Bahar)** | Algoritma Analizi, Mikroİşlemciler ve Denetleyiciler, İleri Bilgisayar Ağları, İşletim Sistemleri | 4 Ders | [Derslere Git](./6-Donem/README.md) |
+| Dönem                   | Açıklama                                                                                                 | Ders Sayısı | Bağlantı                            |
+|:----------------------- |:-------------------------------------------------------------------------------------------------------- |:-----------:|:-----------------------------------:|
+| 📅 **5. Dönem (Güz)**   | Bilgisayar Ağları, Bilgisayar Organizasyonu, Biçimsel Diller ve Otomatlar, Veritabanı Yönetim Sistemleri | 4 Ders      | [Derslere Git](./5-Donem/README.md) |
+| 📅 **6. Dönem (Bahar)** | Algoritma Analizi, Mikroİşlemciler ve Denetleyiciler, İleri Bilgisayar Ağları, İşletim Sistemleri        | 4 Ders      | [Derslere Git](./6-Donem/README.md) |
 
 ---
 
